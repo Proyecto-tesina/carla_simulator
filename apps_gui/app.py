@@ -1,7 +1,8 @@
 from PySide2.QtWidgets import (QAction, QApplication, QMainWindow, QWidget,
                                QPushButton, QVBoxLayout, QHBoxLayout)
 from PySide2.QtCore import Slot
-from models import Carousel, Car
+from modules.car.car import Car
+from modules.carousel.carousel import Carousel
 import sys
 import glob
 import json
@@ -152,7 +153,8 @@ class MainWindow(QMainWindow):
         self.file_menu.addAction(my_publicity)
         self.file_menu.addAction(exit_action)
 
-        self.car = Car()
+        car_info_path = '../CARLA_simulator/PythonAPI/examples/informacion_del_auto.json'
+        self.car = Car(car_info_path)
         self.car.on_risk.connect(lambda: self.cambiar_vista(MapView))
 
     @Slot()
