@@ -7,7 +7,7 @@ import glob
 import json
 
 
-class Publicity_view(QWidget):
+class PublicityView(QWidget):
     """
     Args:
         window: the main window on which the view operates
@@ -60,7 +60,7 @@ class Publicity_view(QWidget):
         return saved_images
 
 
-class Galery_view(QWidget):
+class GaleryView(QWidget):
     """
     Args:
         window: the main window on which the view operates
@@ -110,7 +110,7 @@ class Galery_view(QWidget):
         return saved_images
 
 
-class Map_view(QWidget):
+class MapView(QWidget):
     """
     Args:
         window: the main window on which the view operates
@@ -131,7 +131,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
         self.setWindowTitle('Publicidad')
-        self.setCentralWidget(Publicity_view(self))
+        self.setCentralWidget(PublicityView(self))
 
         self.menu = self.menuBar()
         self.file_menu = self.menu.addMenu('Acciones')
@@ -143,17 +143,17 @@ class MainWindow(QMainWindow):
         new_publicity = QAction('Publicidades nuevas!', self)
 
         # Connect expects a function without parameters so I pass a lambda
-        new_publicity.triggered.connect(lambda: self.cambiar_vista(Publicity_view))
+        new_publicity.triggered.connect(lambda: self.cambiar_vista(PublicityView))
 
         my_publicity = QAction('Mis publicidades', self)
-        my_publicity.triggered.connect(lambda: self.cambiar_vista(Galery_view))
+        my_publicity.triggered.connect(lambda: self.cambiar_vista(GaleryView))
 
         self.file_menu.addAction(new_publicity)
         self.file_menu.addAction(my_publicity)
         self.file_menu.addAction(exit_action)
 
         self.car = Car()
-        self.car.on_risk.connect(lambda: self.cambiar_vista(Map_view))
+        self.car.on_risk.connect(lambda: self.cambiar_vista(MapView))
 
     @Slot()
     def exit_app(self, checked):
@@ -164,7 +164,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(widget(self))
 
     def connect_on_calm_signal(self):
-        self.car.on_calm.connect(lambda: self.cambiar_vista(Publicity_view))
+        self.car.on_calm.connect(lambda: self.cambiar_vista(PublicityView))
 
     def disconnect_on_calm_signal(self):
         self.car.on_calm.disconnect()
