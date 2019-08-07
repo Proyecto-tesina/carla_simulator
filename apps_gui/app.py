@@ -96,11 +96,16 @@ class GaleryView(QWidget):
 
     @Slot()
     def delete_publicity(self):
+        self._delete_publicity_from_file()
+        self.carousel.delete_current_image()
+
+    def _delete_publicity_from_file(self):
+        """ Removes the current publicity from the user file of saved publicities """
         saved_images = self._get_my_publicity()
-        saved_images.remove(self.carousel.current_image)
+        if saved_images:
+            saved_images.remove(self.carousel.current_image)
         with open(self.saved_images_file, 'w', encoding='utf-8') as f:
             json.dump(saved_images, f)
-        self.carousel.delete_current_image()
 
     def _get_my_publicity(self):
         try:

@@ -41,8 +41,9 @@ class Carousel:
             self.poster.setPixmap(self.pixmap.scaled(self.IMAGE_WIDTH, self.IMAGE_HEIGHT))
 
     def delete_current_image(self):
-        self.images_to_roll.remove(self.current_image)
-        self.next_image()
+        if self.images_to_roll:
+            self.images_to_roll.remove(self.current_image)
+            self.next_image()
 
     def set_show_strategy(self, strategy):
         self.strategy = strategy(self)
