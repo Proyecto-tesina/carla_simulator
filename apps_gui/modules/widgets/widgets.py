@@ -1,6 +1,6 @@
 from PySide2.QtWidgets import QWidget, QPushButton, QVBoxLayout, QHBoxLayout
-from modules.carousel.carousel import Carousel
 from PySide2.QtCore import Slot
+from modules.carousel.carousel import Carousel
 import glob
 import json
 
@@ -13,13 +13,29 @@ class PublicityView(QWidget):
     def __init__(self, window):
         QWidget.__init__(self)
         self.saved_images_file = './data/saved_images.json'
-        self.carousel = Carousel(glob.glob('./images/*'))
 
+        carousel_images = glob.glob('./images/*')
+        self.carousel = Carousel(carousel_images)
+
+        self._create_buttons()
+        self._create_layout()
+        self.window = window
+        try:
+            self.window.disconnect_on_calm_signal()
+        except (AttributeError, RuntimeError):
+            pass
+
+    def _create_buttons(self):
         self.btn_save = QPushButton('Guardar')
-        self.btn_reject = QPushButton('Rechazar')
         self.btn_save.setStyleSheet('background-color: green; color: white')
+
+        self.btn_reject = QPushButton('Rechazar')
         self.btn_reject.setStyleSheet('background-color: red; color: white')
 
+        self.btn_reject.clicked.connect(self.carousel.next_image)
+        self.btn_save.clicked.connect(self.save_publicity)
+
+    def _create_layout(self):
         self.options = QHBoxLayout()
         self.options.addWidget(self.btn_reject)
         self.options.addWidget(self.btn_save)
@@ -28,15 +44,6 @@ class PublicityView(QWidget):
         self.layout.addWidget(self.carousel.poster)
         self.layout.addLayout(self.options)
         self.setLayout(self.layout)
-
-        self.btn_reject.clicked.connect(self.carousel.next_image)
-        self.btn_save.clicked.connect(self.save_publicity)
-
-        self.window = window
-        try:
-            self.window.disconnect_on_calm_signal()
-        except (AttributeError, RuntimeError):
-            pass
 
     @Slot()
     def save_publicity(self):
@@ -66,8 +73,14 @@ class GaleryView(QWidget):
     def __init__(self, window):
         QWidget.__init__(self)
         self.saved_images_file = './data/saved_images.json'
-        self.carousel = Carousel(self._get_my_publicity())
 
+        carousel_images = self._get_my_publicity()
+        self.carousel = Carousel(carousel_images)
+
+        self._create_buttons()
+        self._create_layout()
+
+    def _create_buttons(self):
         self.btn_delete = QPushButton('Eliminar Publicidad')
         self.btn_delete.setStyleSheet('background-color: red; color: white')
 
@@ -77,6 +90,11 @@ class GaleryView(QWidget):
         self.right_arrow = QPushButton('Siguiente')
         self.right_arrow.setStyleSheet('background-color: #192c6f; color: white')
 
+        self.left_arrow.clicked.connect(self.carousel.prev_image)
+        self.right_arrow.clicked.connect(self.carousel.next_image)
+        self.btn_delete.clicked.connect(self.delete_publicity)
+
+    def _create_layout(self):
         self.controls = QHBoxLayout()
         self.controls.addWidget(self.btn_delete)
         self.controls.addWidget(self.left_arrow)
@@ -86,10 +104,6 @@ class GaleryView(QWidget):
         self.layout.addWidget(self.carousel.poster)
         self.layout.addLayout(self.controls)
         self.setLayout(self.layout)
-
-        self.left_arrow.clicked.connect(self.carousel.prev_image)
-        self.right_arrow.clicked.connect(self.carousel.next_image)
-        self.btn_delete.clicked.connect(self.delete_publicity)
 
     @Slot()
     def delete_publicity(self):

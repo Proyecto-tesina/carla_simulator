@@ -19,11 +19,10 @@ class MainWindow(QMainWindow):
         exit_action.triggered.connect(self.exit_app)
 
         new_publicity = QAction('Publicidades nuevas!', self)
+        my_publicity = QAction('Mis publicidades', self)
 
         # Connect expects a function without parameters so I pass a lambda
         new_publicity.triggered.connect(lambda: self.cambiar_vista(PublicityView))
-
-        my_publicity = QAction('Mis publicidades', self)
         my_publicity.triggered.connect(lambda: self.cambiar_vista(GaleryView))
 
         self.file_menu.addAction(new_publicity)
@@ -35,7 +34,7 @@ class MainWindow(QMainWindow):
         self.car.on_risk.connect(lambda: self.cambiar_vista(MapView))
 
     @Slot()
-    def exit_app(self, checked):
+    def exit_app(self):
         QApplication.quit()
 
     @Slot()
