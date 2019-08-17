@@ -3,8 +3,6 @@
 *.log
 *.json
 CARLA_simulator/**
-!CARLA_simulator/PythonAPI/
-!CARLA_simulator/PythonAPI/examples/
-!CARLA_simulator/PythonAPI/examples/**
+!CARLA_simulator/driving_simulator.py
 apps_gui/images/**
 gui_simulator/**

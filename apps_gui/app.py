@@ -29,7 +29,7 @@ class MainWindow(QMainWindow):
         self.file_menu.addAction(my_publicity)
         self.file_menu.addAction(exit_action)
 
-        car_info_path = '../CARLA_simulator/PythonAPI/examples/informacion_del_auto.json'
+        car_info_path = '../CARLA_simulator/data/informacion_del_auto.json'
         self.car = Car(car_info_path)
         self.car.on_risk.connect(lambda: self.cambiar_vista(MapView))
 
