@@ -39,7 +39,11 @@ class PlayerObserver(QObject):
 
     def _get_player_from_actors(self, actors):
         player = filter(self._has_player_name, actors)
-        return next(player)
+        try:
+            return next(player)
+        except StopIteration as e:
+            print('There isn\'t a player called "{}" between the actors' .format(self.player_name))
+            raise e
 
     def _has_player_name(self, actor):
         if 'role_name' in actor.attributes:

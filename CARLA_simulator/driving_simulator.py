@@ -386,7 +386,7 @@ class HUD(object):
         self.server_fps = 0
         self.frame = 0
         self.simulation_time = 0
-        self._show_info = True
+        self._show_info = False
         self._info_text = []
         self._server_clock = pygame.time.Clock()
 
@@ -430,7 +430,6 @@ class HUD(object):
         self._info_text += self._get_control_info(control)
         self._info_text += ['', 'Collision:', collision, '', 'Number of vehicles: % 8d' % len(vehicles)]
 
-        nearby_vehicles = []
         if len(vehicles) > 1:
             self._info_text += ['Nearby vehicles:']
             vehicles = [(self._distance_between_vehicles(x.get_location(), transform), x) for x in vehicles if x.id != world.player.id]
@@ -439,15 +438,6 @@ class HUD(object):
                     break
                 vehicle_type = get_actor_display_name(vehicle, truncate=22)
                 self._info_text.append('% 4dm %s' % (distance, vehicle_type))
-                nearby_vehicles.append((distance, vehicle_type))
-
-        data = {'acceleration': acceleration_in_km,
-                'speed': velocity_in_km,
-                'location': (transform.location.x, transform.location.y),
-                'height': transform.location.z,
-                'vehicles': nearby_vehicles,
-                }
-        self._update_json(data)
 
     def _distance_between_vehicles(self, vehicle1, vehicle2):
         dist = math.sqrt((vehicle1.x - vehicle2.location.x)**2 +
@@ -484,10 +474,6 @@ class HUD(object):
                 ('Speed:', control.speed, 0.0, 5.556),
                 ('Jump:', control.jump)]
         return info_text
-
-    def _update_json(self, data):
-        with open("./data/informacion_del_auto.json", "w") as write_file:
-            json.dump(data, write_file, indent=4)
 
     def toggle_info(self):
         self._show_info = not self._show_info
