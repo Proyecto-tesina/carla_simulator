@@ -6,11 +6,7 @@ import json
 
 
 class PublicityView(QWidget):
-    """
-    Args:
-        window: the main window on which the view operates
-    """
-    def __init__(self, window):
+    def __init__(self):
         QWidget.__init__(self)
         self.saved_images_file = './data/saved_images.json'
 
@@ -19,11 +15,6 @@ class PublicityView(QWidget):
 
         self._create_buttons()
         self._create_layout()
-        self.window = window
-        try:
-            self.window.disconnect_on_calm_signal()
-        except (AttributeError, RuntimeError):
-            pass
 
     def _create_buttons(self):
         self.btn_save = QPushButton('Guardar')
@@ -66,11 +57,7 @@ class PublicityView(QWidget):
 
 
 class GaleryView(QWidget):
-    """
-    Args:
-        window: the main window on which the view operates
-    """
-    def __init__(self, window):
+    def __init__(self):
         QWidget.__init__(self)
         self.saved_images_file = './data/saved_images.json'
 
@@ -111,7 +98,7 @@ class GaleryView(QWidget):
         self.carousel.delete_current_image()
 
     def _delete_publicity_from_file(self):
-        """ Removes the current publicity from the user file of saved publicities """
+        """ Removes the current publicity from user's file of saved publicities """
         saved_images = self._get_my_publicity()
         if saved_images:
             saved_images.remove(self.carousel.current_image)
@@ -128,15 +115,8 @@ class GaleryView(QWidget):
 
 
 class MapView(QWidget):
-    """
-    Args:
-        window: the main window on which the view operates
-    """
-    def __init__(self, window):
+    def __init__(self):
         QWidget.__init__(self)
-        self.window = window
-        self.window.connect_on_calm_signal()
-
         self.carousel = Carousel(['./map/mapa_La_Plata.png'])
 
         self.layout = QVBoxLayout()
