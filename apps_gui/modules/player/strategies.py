@@ -25,47 +25,32 @@ class DistanceStrategy:
     """
     def __init__(self, player, distance=10):
         self.player = player
-        self.distance_allowed = distance
+        self.distance_limit = distance
 
     def is_busy(self):
-        nearby_vehicles = self._get_nearby_vehicles()
-        if nearby_vehicles:
-            return self.nearest_vehicle_distance(nearby_vehicles) < self.distance_allowed
+        nearest_vehicle = self._get_nearby_vehicles()
+        if nearest_vehicle:
+            return nearest_vehicle < self.distance_limit
 
     def _get_nearby_vehicles(self):
-        vehicles = self.player.get_world.get_actors().filter('vehicle.*')
-        nearby_vehicles = []
-
+        vehicles = self.player.get_world().get_actors().filter('vehicle.*')
         if len(vehicles) > 1:
-            distance_vehicle_pairs = self._get_vehicle_distance_pairs(vehicles)
-            for distance, vehicle in sorted(distance_vehicle_pairs):
-                if distance > 200.0:
-                    break
-                vehicle_type = self._get_actor_display_name(vehicle, truncate=22)
-                nearby_vehicles.append((distance, vehicle_type))
-        return nearby_vehicles
+            distance_to_vehicles = self._get_distances(vehicles)
+            return min(distance_to_vehicles)
 
-    def _get_vehicle_distance_pairs(self, vehicles):
+    def _get_distances(self, vehicles):
         transform = self.player.get_transform()
-        pairs = []
+        dists = []
         for x in vehicles:
             if x.id != self.player.id:
-                pairs.append((self._distance_between_vehicles(x.get_location(), transform), x))
-        return pairs
+                dists.append(self._distance_between_vehicles(x.get_location(), transform))
+        return dists
 
     def _distance_between_vehicles(self, vehicle1, vehicle2):
         dist = math.sqrt((vehicle1.x - vehicle2.location.x)**2 +
                          (vehicle1.y - vehicle2.location.y)**2 +
                          (vehicle1.z - vehicle2.location.z)**2)
         return dist
-
-    def _get_actor_display_name(actor, truncate=250):
-        name = ' '.join(actor.type_id.replace('_', '.').title().split('.')[1:])
-        return (name[:truncate - 1] + u'\u2026') if len(name) > truncate else name
-
-    def _nearest_vehicle_distance(self, nearby_vehicles):
-        sorted_vehicles = sorted(nearby_vehicles, key=lambda x: x[0])
-        return sorted_vehicles[0][0]
 
 
 class WeatherStrategy:
