@@ -118,7 +118,9 @@ class MapView(QWidget):
     def __init__(self):
         QWidget.__init__(self)
         self.carousel = Carousel(['./map/mapa_La_Plata.png'])
+        self._create_layout()
 
+    def _create_layout(self):
         self.layout = QVBoxLayout()
         self.layout.addWidget(self.carousel.poster)
         self.setLayout(self.layout)

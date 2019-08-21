@@ -1,5 +1,8 @@
+#!/usr/bin/python3
+
 from PySide2.QtCore import QObject, Signal
 from .strategies import SpeedSrategy
+import logging
 import glob
 import sys
 
@@ -14,7 +17,10 @@ import carla
 class PlayerObserver(QObject):
     """
     Args:
+        player: Name of the player beeing observed
         risk_calc: Class that serves as strategy to calculate risk of the car
+        host: IP of the host server
+        port: TCP port to listen to
     """
     on_risk = Signal()
     on_calm = Signal()
@@ -41,9 +47,8 @@ class PlayerObserver(QObject):
         player = filter(self._has_player_name, actors)
         try:
             return next(player)
-        except StopIteration as e:
-            print('\nThere isn\'t a player called "{}" between the actors\n' .format(self.player_name))
-            raise e
+        except StopIteration:
+            logging.exception(f'Player "{self.player_name}" not found in existent actors')
 
     def _has_player_name(self, actor):
         if 'role_name' in actor.attributes:
@@ -55,7 +60,7 @@ class PlayerObserver(QObject):
     def set_risk_calculator(self, risk_calc):
         self.risk_calc = risk_calc(self.player)
 
-    def check_risk(self, timestamp):
+    def check_risk(self, world_snapshot):
         if self.is_busy():
             self.emit_on_risk()
         else:

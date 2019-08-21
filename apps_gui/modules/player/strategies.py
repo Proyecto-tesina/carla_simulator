@@ -5,6 +5,7 @@ class SpeedSrategy:
     """
     Args:
         player: the player on which the strategy operates
+        speed: the velocity in kilometers before the player is busy
     """
     def __init__(self, player, speed=20):
         self.player = player
@@ -20,15 +21,16 @@ class DistanceStrategy:
     """
     Args:
         player: the player on which the strategy operates
+        distance: the distance in meters to other cars on wich the player is busy
     """
     def __init__(self, player, distance=10):
         self.player = player
-        self.distance_allowed_in_meters = distance
+        self.distance_allowed = distance
 
     def is_busy(self):
         nearby_vehicles = self._get_nearby_vehicles()
         if nearby_vehicles:
-            return self.nearest_vehicle_distance(nearby_vehicles) < self.distance_allowed_in_meters
+            return self.nearest_vehicle_distance(nearby_vehicles) < self.distance_allowed
 
     def _get_nearby_vehicles(self):
         vehicles = self.player.get_world.get_actors().filter('vehicle.*')
@@ -67,6 +69,11 @@ class DistanceStrategy:
 
 
 class WeatherStrategy:
+    """
+    Args:
+        player: the player on which the strategy operates
+        rain_limit: the limit of precipitation before the player is busy
+    """
     def __init__(self, player, rain_limit=0):
         self.player = player
         self.rain_limit = rain_limit
