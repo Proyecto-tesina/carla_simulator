@@ -64,3 +64,17 @@ class DistanceStrategy:
     def _nearest_vehicle_distance(self, nearby_vehicles):
         sorted_vehicles = sorted(nearby_vehicles, key=lambda x: x[0])
         return sorted_vehicles[0][0]
+
+
+class WeatherStrategy:
+    def __init__(self, player, rain_limit=0):
+        self.player = player
+        self.rain_limit = rain_limit
+
+    def is_busy(self):
+        return self.get_rain_level() > self.rain_limit
+
+    def get_rain_level(self):
+        world = self.player.get_world()
+        weather = world.get_weather()
+        return weather.precipitation
