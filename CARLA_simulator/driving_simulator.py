@@ -77,7 +77,6 @@ import math
 import random
 import re
 import weakref
-import json
 
 try:
     import pygame

@@ -42,7 +42,7 @@ class PlayerObserver(QObject):
         try:
             return next(player)
         except StopIteration as e:
-            print('There isn\'t a player called "{}" between the actors' .format(self.player_name))
+            print('\nThere isn\'t a player called "{}" between the actors\n' .format(self.player_name))
             raise e
 
     def _has_player_name(self, actor):

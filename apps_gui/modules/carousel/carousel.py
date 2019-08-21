@@ -10,9 +10,9 @@ class Carousel:
         images: Expects a Python list containing the paths of the images to display.
         strategy: A strategy to show images
     """
-    def __init__(self, images=None, strategy=FifoStrategy):
-        self.IMAGE_WIDTH = 800
-        self.IMAGE_HEIGHT = 600
+    def __init__(self, images=None, strategy=FifoStrategy, width=800, height=600):
+        self.IMAGE_WIDTH = width
+        self.IMAGE_HEIGHT = height
         self.strategy = strategy(self)
         self.images_to_roll = images
         self.current_image = ''

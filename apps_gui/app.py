@@ -1,19 +1,20 @@
 from PySide2.QtWidgets import QAction, QApplication, QMainWindow
 from PySide2.QtCore import Slot
-
-from modules.player.player import PlayerObserver
 from modules.widgets.widgets import PublicityView, GaleryView, MapView
+from modules.player.player import PlayerObserver
+from modules.player.strategies import WeatherStrategy
 import sys
+import argparse
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, args):
         QMainWindow.__init__(self)
         self.setWindowTitle('Publicidad')
         self.set_widget_publicity()
         self._create_menu()
 
-        self.player = PlayerObserver()
+        self.player = PlayerObserver(args.name, WeatherStrategy, args.host, args.port)
 
         self.player.on_calm.connect(self.set_widget_publicity)
         self.player.on_risk.connect(self.set_widget_map)
@@ -53,10 +54,30 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(GaleryView())
 
 
-if __name__ == "__main__":
+def main():
+    argparser = argparse.ArgumentParser(description='Main Window of the App')
+    argparser.add_argument(
+        '--host',
+        default='127.0.0.1',
+        help='IP of the host server (default: 127.0.0.1)')
+    argparser.add_argument(
+        '-p', '--port',
+        default=2000,
+        type=int,
+        help='TCP port to listen to (default: 2000)')
+    argparser.add_argument(
+        '-n', '--name',
+        default='hero',
+        help='Player name (default: "hero")')
+    args = argparser.parse_args()
+
     app = QApplication(sys.argv)
-    window = MainWindow()
+    window = MainWindow(args)
     window.resize(800, 600)
     window.show()
 
     sys.exit(app.exec_())
+
+
+if __name__ == "__main__":
+    main()
