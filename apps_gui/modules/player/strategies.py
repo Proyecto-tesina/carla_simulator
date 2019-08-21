@@ -64,9 +64,9 @@ class WeatherStrategy:
         self.rain_limit = rain_limit
 
     def is_busy(self):
-        return self.get_rain_level() > self.rain_limit
+        return self._get_rain_level() > self.rain_limit
 
-    def get_rain_level(self):
+    def _get_rain_level(self):
         world = self.player.get_world()
         weather = world.get_weather()
         return weather.precipitation

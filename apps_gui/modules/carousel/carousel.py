@@ -45,5 +45,5 @@ class Carousel:
             self.images_to_roll.remove(self.current_image)
             self.next_image()
 
-    def set_show_strategy(self, strategy):
+    def set_strategy(self, strategy):
         self.strategy = strategy(self)
