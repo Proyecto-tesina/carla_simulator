@@ -42,7 +42,7 @@ class PublicityView(QWidget):
 
         if self.carousel.current_image not in saved_images:
             saved_images.append(self.carousel.current_image)
-            with open(self.saved_images_file, 'w', encoding='utf-8') as f:
+            with open(self.saved_images_file, 'w+', encoding='utf-8') as f:
                 json.dump(saved_images, f)
 
         self.carousel.next_image()

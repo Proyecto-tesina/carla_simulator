@@ -33,6 +33,7 @@ class DistanceStrategy:
             return nearest_vehicle < self.distance_limit
 
     def _get_nearby_vehicles(self):
+        """ Return the distance to the very next vehicle """
         vehicles = self.player.get_world().get_actors().filter('vehicle.*')
         if len(vehicles) > 1:
             distance_to_vehicles = self._get_distances(vehicles)
