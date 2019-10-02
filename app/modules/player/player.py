@@ -4,12 +4,16 @@ from PySide2.QtCore import QObject, Signal
 from .strategies import SpeedSrategy
 import logging
 import glob
+import os
 import sys
 
 try:
-    sys.path.append(glob.glob('../CARLA_simulator/PythonAPI/carla/dist/*')[0])
-except IndexError as e:
-    raise e
+    sys.path.append(glob.glob('../CARLA_simulator/PythonAPI/carla/dist/carla-*%d.%d-%s.egg' % (
+        sys.version_info.major,
+        sys.version_info.minor,
+        'win-amd64' if os.name == 'nt' else 'linux-x86_64'))[0])
+except IndexError:
+    pass
 
 import carla
 
