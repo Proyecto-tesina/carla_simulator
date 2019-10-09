@@ -1,7 +1,7 @@
+from helpers.carla import get_actor_display_name, distance_between_vehicles, convert_to_km
 import glob
 import os
 import sys
-import math
 
 try:
     sys.path.append(glob.glob('../CARLA_simulator/PythonAPI/carla/dist/carla-*%d.%d-%s.egg' % (
@@ -20,10 +20,11 @@ world = client.get_world()
 
 class Actor:
     def __init__(self, name):
-        actors = world.get_actors()
+        self.actors = world.get_actors()
         self.hero_name = name
         try:
-            self.get_player_info(next(filter(self.has_player_name, actors)))
+            self.player = next(filter(self.has_player_name, self.actors))
+            self.init_player_info(self.player)
         except StopIteration:
            pass
         
@@ -31,15 +32,31 @@ class Actor:
         if 'role_name' in actor.attributes:
             return actor.attributes['role_name'] == self.hero_name
 
-    def get_player_info(self, player):
+    def init_player_info(self, player):
         velocity = player.get_velocity()
         acceleration = player.get_acceleration()
-        transform = player.get_transform()
-
-        self.velocity_in_km = 3.6 * math.sqrt(velocity.x**2 + velocity.y**2 + velocity.z**2)
-        self.acceleration_in_km = 3.6 * math.sqrt(acceleration.x**2 + acceleration.y**2 + acceleration.z**2)
-        self.location = transform.location
+        
+        self.velocity_in_km = convert_to_km(velocity)
+        self.acceleration_in_km = convert_to_km(acceleration)
+        self.transform = player.get_transform()
+        self.location = self.transform.location
         self.control = player.get_control()
+
+    def get_nearby_vehicles(self):
+        vehicles = self.actors.filter('vehicle.*')
+        if len(vehicles) > 1:
+            dist_vehicle_pair = self._get_pair(vehicles)
+        return dist_vehicle_pair
+
+    def _get_pair(self, vehicles):
+        """ Return the pair (distance, vehicle_name) of a vehicles list or an empty list """
+        pairs = []
+        for x in vehicles:
+            if x.id != self.player.id:
+                vehicle_info = (distance_between_vehicles(x.get_location(), self.transform), get_actor_display_name(x))
+                pairs.append(vehicle_info)
+        return pairs
+
 
     def dict(self):
         info = {
@@ -51,13 +68,11 @@ class Actor:
             },
             'height': self.location.z,
             'control': {
-                'throttle': (self.control.throttle, 0.0, 1.0),
-                'steer': (self.control.steer, -1.0, 1.0),
-                'brake': (self.control.brake, 0.0, 1.0),
                 'reverse': (self.control.reverse),
                 'hand brake': (self.control.hand_brake),
                 'manual': (self.control.manual_gear_shift),
-                'gear: %s' % {-1: 'R', 0: 'N'}.get(control.gear, control.gear)
+                'gear': {-1: 'R', 0: 'N'}.get(self.control.gear, self.control.gear),
             },
+            'nearby-vehicles': self.get_nearby_vehicles(),
         }
         return info

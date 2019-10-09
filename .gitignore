@@ -6,3 +6,4 @@ CARLA_simulator/**
 !CARLA_simulator/driving_simulator.py
 apps_gui/images/**
 gui_simulator/**
+carla_env/
