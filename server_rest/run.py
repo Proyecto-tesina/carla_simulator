@@ -3,14 +3,12 @@ from models.actors import Actor
 
 app = Flask(__name__)
 
+
 @app.route('/actors/<string:name>')
 def get_actor_by_name(name):
-    try:
-        actor = Actor(name)
-        return actor.dict()
-    except AttributeError:
-        raise AttributeError
-        return 'No existen actores con ese nombre'
-    
+    actor = Actor(name)
+    return actor.dict()
+
+
 if __name__ == '__main__':
     app.run(debug=True)
