@@ -102,6 +102,7 @@ try:
     from pygame.locals import K_d
     from pygame.locals import K_h
     from pygame.locals import K_m
+    from pygame.locals import K_n
     from pygame.locals import K_p
     from pygame.locals import K_q
     from pygame.locals import K_r
@@ -260,6 +261,8 @@ class KeyboardControl(object):
                     world.hud.toggle_info()
                 elif event.key == K_h or (event.key == K_SLASH and pygame.key.get_mods() & KMOD_SHIFT):
                     world.hud.help.toggle()
+                elif event.key == K_n:
+                    world.hud.drt_alert.toggle()
                 elif event.key == K_TAB:
                     world.camera_manager.toggle_camera()
                 elif event.key == K_c and pygame.key.get_mods() & KMOD_SHIFT:
@@ -382,6 +385,7 @@ class HUD(object):
         self._font_mono = pygame.font.Font(mono, 14)
         self._notifications = FadingText(font, (width, 40), (0, height - 40))
         self.help = HelpText(pygame.font.Font(mono, 24), width, height)
+        self.drt_alert = AlertLight(20, width, height)
         self.server_fps = 0
         self.frame = 0
         self.simulation_time = 0
@@ -520,6 +524,7 @@ class HUD(object):
                 v_offset += 18
         self._notifications.render(display)
         self.help.render(display)
+        self.drt_alert.render(display)
 
 
 # ==============================================================================
@@ -577,6 +582,25 @@ class HelpText(object):
     def render(self, display):
         if self._render:
             display.blit(self.surface, self.pos)
+
+
+# ==============================================================================
+# -- AlertLight -----------------------------------------------------------
+# ==============================================================================
+
+
+class AlertLight(object):
+    def __init__(self, size, width, height):
+        self.size = size
+        self.pos = (width - size - 10, size + 10)
+        self._render = False
+
+    def toggle(self):
+        self._render = not self._render
+
+    def render(self, display):
+        if self._render:
+            pygame.draw.circle(display, (235, 64, 52), self.pos, self.size)
 
 
 # ==============================================================================
