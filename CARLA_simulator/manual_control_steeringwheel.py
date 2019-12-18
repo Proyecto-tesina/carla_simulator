@@ -231,14 +231,12 @@ class DualControl(object):
 
         self._parser = ConfigParser()
         self._parser.read('wheel_config.ini')
-        self._steer_idx = int(
-            self._parser.get('G29 Racing Wheel', 'steering_wheel'))
-        self._throttle_idx = int(
-            self._parser.get('G29 Racing Wheel', 'throttle'))
-        self._brake_idx = int(self._parser.get('G29 Racing Wheel', 'brake'))
-        self._reverse_idx = int(self._parser.get('G29 Racing Wheel', 'reverse'))
-        self._handbrake_idx = int(
-            self._parser.get('G29 Racing Wheel', 'handbrake'))
+        self._steer_idx = self._parser.getint('G29 Racing Wheel', 'steering_wheel')
+        self._throttle_idx = self._parser.getint('G29 Racing Wheel', 'throttle')
+        self._brake_idx = self._parser.getint('G29 Racing Wheel', 'brake')
+        self._reverse_idx = self._parser.getint('G29 Racing Wheel', 'reverse')
+        self._handbrake_idx = self._parser.getint('G29 Racing Wheel', 'handbrake')
+        self._drt_action_idx = self._parser.getint('G29 Racing Wheel', 'drt_action')
 
     def parse_events(self, world, clock):
         for event in pygame.event.get():
@@ -247,12 +245,14 @@ class DualControl(object):
             elif event.type == pygame.JOYBUTTONDOWN:
                 if event.button == 0:
                     world.restart()
-                elif event.button == 1:
+                elif event.button == 9:
                     world.hud.toggle_info()
                 elif event.button == 2:
                     world.camera_manager.toggle_camera()
                 elif event.button == 3:
                     world.next_weather()
+                elif event.button == self._drt_action_idx:
+                    world.hud.drt_alert.toggle()
                 elif event.button == self._reverse_idx:
                     self._control.gear = 1 if self._control.reverse else -1
                 elif event.button == 23:
