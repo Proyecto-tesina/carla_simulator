@@ -2,10 +2,8 @@
 *.swp
 *.log
 *.json
-CARLA_simulator/**
-!CARLA_simulator/driving_simulator.py
-!CARLA_simulator/manual_control_steeringwheel.py
-!CARLA_simulator/wheel_config.ini
+Carla/**
 apps_gui/images/**
 gui_simulator/**
 env/
+_out/**
