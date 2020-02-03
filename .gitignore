@@ -6,4 +6,5 @@ Carla/**
 apps_gui/images/**
 gui_simulator/**
 env/
+venv/
 _out/**
