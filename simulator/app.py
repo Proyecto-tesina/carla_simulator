@@ -39,6 +39,9 @@ import logging
 
 from Controller.wheel_control import WheelControl
 from Controller.keyboard_control import KeyboardControl
+
+from Display.resolution import CustomResolution, MultimonitorResolution
+
 import carla
 
 from Hud.hud import Hud
@@ -61,30 +64,48 @@ class App():
         self.world = None
 
         try:
-            self.client = carla.Client(args.host, args.port)
-            self.client.set_timeout(2.0)
+            self.__init_client(args)
 
-            self.display = pygame.display.set_mode(
-                (args.width, args.height),
-                pygame.HWSURFACE | pygame.DOUBLEBUF)
+            self.__init_display(args)
 
-            self.hud = Hud(args.width, args.height)
+            self.__init_hud(args)
 
-            self.world = World(
-                self.client.get_world(),
-                self.hud,
-                args
-            )
+            self.__init_world(args)
 
-            self.controller = args.controller(
-                self.world,
-                args.autopilot
-            )
+            self.__init_controller(args)
 
             self.clock = pygame.time.Clock()
             self.start()
         finally:
             self.stop()
+
+    def __init_client(self, args):
+        self.client = carla.Client(args.host, args.port)
+        self.client.set_timeout(2.0)
+
+    def __init_display(self, args):
+        self.resolution = args.resolution
+
+        self.display = pygame.display.set_mode(
+            self.resolution.size(),
+            pygame.HWSURFACE | pygame.DOUBLEBUF
+        )
+
+    def __init_hud(self, args):
+        self.hud = Hud(*self.resolution.size())
+
+    def __init_controller(self, args):
+        self.controller = args.controller(
+            self.world,
+            args.autopilot
+        )
+
+    def __init_world(self, args):
+        self.world = World(
+            self.client.get_world(),
+            self.hud,
+            args
+        )
 
     def start(self):
         while True:
@@ -134,11 +155,6 @@ def main():
         action='store_true',
         help='enable autopilot')
     argparser.add_argument(
-        '--res',
-        metavar='WIDTHxHEIGHT',
-        default='1280x720',
-        help='window resolution (default: 1280x720)')
-    argparser.add_argument(
         '--filter',
         metavar='PATTERN',
         default='vehicle.*',
@@ -157,9 +173,24 @@ def main():
         '-w', '--wheel',
         action='store_true',
         help='Enable manual control steering wheel')
+    argparser.add_argument(
+        '--res',
+        metavar='WIDTHxHEIGHT',
+        default='1280x720',
+        help='window resolution (default: 1280x720)')
+    argparser.add_argument(
+        '--multimonitor',
+        action='store_true',
+        help='Multimonitor window resolution, extends display in all monitors')
+
     args = argparser.parse_args()
 
-    args.width, args.height = [int(x) for x in args.res.split('x')]
+    if args.multimonitor:
+        args.resolution = MultimonitorResolution()
+    else:
+        width, height = [int(x) for x in args.res.split('x')]
+        args.resolution = CustomResolution(width, height)
+
     args.controller = WheelControl if args.wheel else KeyboardControl
 
     log_level = logging.DEBUG if args.debug else logging.INFO
