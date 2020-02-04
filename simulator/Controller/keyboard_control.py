@@ -134,15 +134,24 @@ class KeyboardControl(object):
                         world.player.set_autopilot(self._autopilot_enabled)
                         world.hud.notification('Autopilot %s' % (
                             'On' if self._autopilot_enabled else 'Off'))
+                self.hook_parse_events(event, world)
+
         if not self._autopilot_enabled:
             if isinstance(self._control, carla.VehicleControl):
                 self._parse_vehicle_keys(
                     pygame.key.get_pressed(), clock.get_time())
+                self._parse_vehicle()
                 self._control.reverse = self._control.gear < 0
             elif isinstance(self._control, carla.WalkerControl):
                 self._parse_walker_keys(
                     pygame.key.get_pressed(), clock.get_time())
             world.player.apply_control(self._control)
+
+    def hook_parse_events(self, event, world):
+        pass
+
+    def _parse_vehicle(self):
+        pass
 
     def _parse_vehicle_keys(self, keys, milliseconds):
         self._control.throttle = 1.0 if keys[K_UP] or keys[K_w] else 0.0
