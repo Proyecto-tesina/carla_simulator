@@ -34,62 +34,13 @@ except IndexError:
 # ==============================================================================
 
 
-import carla
-
-
 import argparse
 import logging
-try:
-    import pygame
-except ImportError:
-    raise RuntimeError(
-        'cannot import pygame, make sure pygame package is installed')
 
-from Hud.hud import Hud
+from app import App
+
+from Controller.wheel_control import WheelControl
 from Controller.keyboard_control import KeyboardControl
-from World.world import World
-
-
-# ==============================================================================
-# -- game_loop() ---------------------------------------------------------------
-# ==============================================================================
-
-
-def game_loop(args):
-    pygame.init()
-    pygame.font.init()
-    world = None
-
-    try:
-        client = carla.Client(args.host, args.port)
-        client.set_timeout(2.0)
-
-        display = pygame.display.set_mode(
-            (args.width, args.height),
-            pygame.HWSURFACE | pygame.DOUBLEBUF)
-
-        hud = Hud(args.width, args.height)
-        world = World(client.get_world(), hud, args)
-        controller = KeyboardControl(world, args.autopilot)
-
-        clock = pygame.time.Clock()
-        while True:
-            clock.tick_busy_loop(60)
-            if controller.parse_events(client, world, clock):
-                return
-            world.tick(clock)
-            world.render(display)
-            pygame.display.flip()
-
-    finally:
-
-        if (world and world.recording_enabled):
-            client.stop_recorder()
-
-        if world is not None:
-            world.destroy()
-
-        pygame.quit()
 
 
 # ==============================================================================
@@ -140,9 +91,14 @@ def main():
         default=2.2,
         type=float,
         help='Gamma correction of the camera (default: 2.2)')
+    argparser.add_argument(
+        '-w', '--wheel',
+        action='store_true',
+        help='Enable manual control steering wheel')
     args = argparser.parse_args()
 
     args.width, args.height = [int(x) for x in args.res.split('x')]
+    args.controller = WheelControl if args.wheel else KeyboardControl
 
     log_level = logging.DEBUG if args.debug else logging.INFO
     logging.basicConfig(format='%(levelname)s: %(message)s', level=log_level)
@@ -152,8 +108,7 @@ def main():
     print(__doc__)
 
     try:
-
-        game_loop(args)
+        App(args)
 
     except KeyboardInterrupt:
         print('\nCancelled by user. Bye!')
