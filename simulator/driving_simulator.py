@@ -38,7 +38,6 @@ import argparse
 import logging
 
 from app import App
-
 from Controller.wheel_control import WheelControl
 from Controller.keyboard_control import KeyboardControl
 

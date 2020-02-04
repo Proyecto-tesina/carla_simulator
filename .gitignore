@@ -5,6 +5,7 @@
 Carla/**
 apps_gui/images/**
 gui_simulator/**
+__pycache__/
 env/
 venv/
 _out/**

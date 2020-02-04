@@ -1,10 +1,11 @@
+import random
+import carla
+
 from Helpers.helpers import find_weather_presets, get_actor_display_name
 from Sensors.collision_sensor import CollisionSensor
 from Sensors.gnss_sensor import GnssSensor
 from Sensors.lane_invasion_sensor import LaneInvasionSensor
 from Camera.camera_manager import CameraManager
-import random
-import carla
 
 
 class World(object):
