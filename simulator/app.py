@@ -198,7 +198,11 @@ def main():
 
     logging.info('listening to server %s:%s', args.host, args.port)
 
-    print(__doc__)
+    try:
+        instructions = open('./simulator/instructions.txt', 'r')
+        print(instructions.read())
+    except FileNotFoundError:
+        logging.warning('Couldn\'t open instructions file')
 
     try:
         App(args)
