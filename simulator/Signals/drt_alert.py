@@ -4,9 +4,10 @@ import random
 
 
 class RandomPoint():
-    def __init__(self, max_value, size):
-        self.MARGIN = 10
 
+    MARGIN = 10
+
+    def __init__(self, max_value, size):
         self.max_value = max_value
         self.size = size
 
@@ -50,6 +51,9 @@ class RandomPosition():
 
 
 class AlertLight(object):
+
+    COLOR = (235, 64, 52)
+
     def __init__(self, size, width, height):
         self.size = size
         self.pos = RandomPosition(size, width, height)
@@ -63,7 +67,7 @@ class AlertLight(object):
         if self._render:
             pygame.draw.circle(
                 display,
-                (235, 64, 52),
+                self.COLOR,
                 self.pos.resolution,
                 self.size
             )
