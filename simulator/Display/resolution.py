@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 
 from screeninfo import screeninfo
 
+import pygame
+
 
 class Resolution(ABC):
 
@@ -30,6 +32,9 @@ class CustomResolution(Resolution):
     def height(self):
         return self.__height
 
+    def mode(self):
+        return pygame.HWSURFACE | pygame.DOUBLEBUF
+
 
 class MultimonitorResolution(Resolution):
     def __init__(self):
@@ -46,3 +51,6 @@ class MultimonitorResolution(Resolution):
 
     def monitors_height(self):
         return [monitor.height for monitor in self.monitors]
+
+    def mode(self):
+        return pygame.FULLSCREEN

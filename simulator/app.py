@@ -88,7 +88,7 @@ class App():
 
         self.display = pygame.display.set_mode(
             self.resolution.size(),
-            pygame.HWSURFACE | pygame.DOUBLEBUF
+            self.resolution.mode()
         )
 
     def __init_hud(self, args):
