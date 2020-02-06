@@ -20,7 +20,8 @@ class Hud(object):
         self._font_mono = pygame.font.Font(mono, 14)
         self._notifications = FadingText(font, (width, 40), (0, height - 40))
         self.help = HelpText(pygame.font.Font(mono, 24), width, height)
-        self.drt_alert = AlertLight(40, width, height)
+        self.drt_alert = AlertLight(
+            40, width, height, pos_refresh=True, interval=(2, 5))
         self.server_fps = 0
         self.frame = 0
         self.simulation_time = 0

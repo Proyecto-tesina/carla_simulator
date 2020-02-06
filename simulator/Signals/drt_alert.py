@@ -1,6 +1,8 @@
 import pygame
-
+import threading
+import time
 import random
+import logging
 
 
 class RandomPoint():
@@ -54,14 +56,42 @@ class AlertLight(object):
 
     COLOR = (235, 64, 52)
 
-    def __init__(self, size, width, height):
+    def __init__(self, size, width, height, pos_refresh=False, interval=None):
         self.size = size
         self.pos = RandomPosition(size, width, height)
+        self.interval = interval
+        self.pos_refresh_active = pos_refresh
         self._render = False
 
+        if interval:
+            self.assert_drt()
+
     def toggle(self):
-        self.pos.refresh()
-        self._render = not self._render
+        if self._render:
+            self.turn_off_light()
+        else:
+            self.turn_on_light()
+
+    def assert_drt(self):
+        if self.interval:
+            self.turn_off_light()
+            threading.Thread(target=self._schedule_light).start()
+        else:
+            logging.warning(
+                'Cannot schedule DRT light, there\'s no interval specified')
+
+    def _schedule_light(self):
+        wait_time = random.randint(self.interval[0], self.interval[1])
+        time.sleep(wait_time)
+        self.turn_on_light()
+
+    def turn_on_light(self):
+        if self.pos_refresh_active:
+            self.pos.refresh()
+        self._render = True
+
+    def turn_off_light(self):
+        self._render = False
 
     def render(self, display):
         if self._render:

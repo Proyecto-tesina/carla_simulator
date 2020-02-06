@@ -64,6 +64,8 @@ class KeyboardControl(object):
                     world.hud.toggle_info()
                 elif event.key == K_h or (event.key == K_SLASH and pygame.key.get_mods() & KMOD_SHIFT):
                     world.hud.help.toggle()
+                elif event.key == K_n and pygame.key.get_mods() & KMOD_SHIFT:
+                    world.hud.drt_alert.assert_drt()
                 elif event.key == K_n:
                     world.hud.drt_alert.toggle()
                 elif event.key == K_TAB:
