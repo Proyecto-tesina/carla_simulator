@@ -15,6 +15,10 @@ class Resolution(ABC):
     def height(self):
         pass
 
+    @abstractmethod
+    def mode(self):
+        pass
+
     def size(self):
         return self.width(), self.height()
 
