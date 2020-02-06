@@ -51,7 +51,7 @@ class MultimonitorResolution(Resolution):
         return [monitor.width for monitor in self.monitors]
 
     def height(self):
-        return min(self.monitors_height())
+        return max(self.monitors_height())
 
     def monitors_height(self):
         return [monitor.height for monitor in self.monitors]
