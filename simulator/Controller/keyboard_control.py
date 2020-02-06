@@ -136,7 +136,7 @@ class KeyboardControl(object):
                         world.player.set_autopilot(self._autopilot_enabled)
                         world.hud.notification('Autopilot %s' % (
                             'On' if self._autopilot_enabled else 'Off'))
-                self.hook_parse_events(event, world)
+            self.hook_parse_events(world, event)
 
         if not self._autopilot_enabled:
             if isinstance(self._control, carla.VehicleControl):

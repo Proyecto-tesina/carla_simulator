@@ -29,7 +29,7 @@ class WheelControl(KeyboardControl):
         self._joystick.init()
 
         self._parser = ConfigParser()
-        self._parser.read('wheel_config.ini')
+        self._parser.read('./simulator/wheel_config.ini')
         self._steer_idx = self._parser.getint(
             'G29 Racing Wheel', 'steering_wheel')
         self._throttle_idx = self._parser.getint(
@@ -40,6 +40,8 @@ class WheelControl(KeyboardControl):
             'G29 Racing Wheel', 'handbrake')
         self._drt_action_idx = self._parser.getint(
             'G29 Racing Wheel', 'drt_action')
+        self._drt_schedule_idx = self._parser.getint(
+            'G29 Racing Wheel', 'drt_schedule')
 
     def hook_parse_events(self, world, event):
         if event.type == pygame.JOYBUTTONDOWN:
@@ -53,6 +55,8 @@ class WheelControl(KeyboardControl):
                 world.next_weather()
             elif event.button == self._drt_action_idx:
                 world.hud.drt_alert.toggle()
+            elif event.button == self._drt_schedule_idx:
+                world.hud.drt_alert.assert_drt()
             elif event.button == self._reverse_idx:
                 self._control.gear = 1 if self._control.reverse else -1
             elif event.button == 23:
