@@ -4,7 +4,7 @@ import pygame
 import carla
 
 from Helpers.helpers import get_actor_display_name
-from Signals.drt_alert import AlertLight
+from Signals.Drt.light import AlertLight
 from Signals.fading_text import FadingText
 from Signals.help_text import HelpText
 
@@ -20,8 +20,7 @@ class Hud(object):
         self._font_mono = pygame.font.Font(mono, 14)
         self._notifications = FadingText(font, (width, 40), (0, height - 40))
         self.help = HelpText(pygame.font.Font(mono, 24), width, height)
-        self.drt_alert = AlertLight(
-            40, width, height, pos_refresh=True, interval=(2, 5))
+        self.drt_alert = AlertLight(width, height)
         self.server_fps = 0
         self.frame = 0
         self.simulation_time = 0
