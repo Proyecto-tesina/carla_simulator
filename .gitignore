@@ -2,6 +2,7 @@
 *.swp
 *.log
 *.json
+!*_config.json
 Carla/**
 apps_gui/images/**
 gui_simulator/**

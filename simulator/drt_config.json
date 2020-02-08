@@ -1,0 +1,40 @@
+{
+    "config": {
+        "size": 200,
+        "color": "#ffffff",
+        "mode_on": 20,
+        "position": 2
+    },
+    "modes": [
+        {
+            "id": 1,
+            "name": "random",
+            "interval": {
+                "start" : 2,
+                "end" : 5
+            }
+        },
+        {
+            "id": 2,
+            "name": "manual"
+        }
+    ],
+    "positions": [
+        {
+            "id": 1,
+            "name": "random",
+            "region": {
+                "x": 1024,
+                "y": 720
+            }
+        },
+        {
+            "id": 2,
+            "name": "fixed",
+            "coords": {
+                "x": 1024,
+                "y": 720
+            }
+        }
+    ]
+}
