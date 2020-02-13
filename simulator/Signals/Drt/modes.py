@@ -1,6 +1,7 @@
 import random
 
 import time
+import logging
 
 from threading import Thread
 
@@ -33,7 +34,7 @@ class RandomMode(Mode):
         self.start_timer()
 
     def toggle(self):
-        if self.drt.is_render:
+        if self.drt.is_rendered:
             self.turn_off()
 
     def turn_off(self):
@@ -45,7 +46,7 @@ class RandomMode(Mode):
 
     def _schedule_light(self):
         wait_time = random.randint(*self.interval)
-        print('New shedulling on:', wait_time)
+        logging.info(f'New shedulling on: {wait_time}')
 
         time.sleep(wait_time)
         self.drt.turn_on()
@@ -54,7 +55,7 @@ class RandomMode(Mode):
 class ManualMode(Mode):
 
     def toggle(self):
-        if self.drt.is_render:
+        if self.drt.is_rendered:
             self.drt.turn_off()
         else:
             self.drt.turn_on()

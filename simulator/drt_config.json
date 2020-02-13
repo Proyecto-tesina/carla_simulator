@@ -1,8 +1,8 @@
 {
     "config": {
         "size": 20,
-        "color": "#ffffff",
-        "mode_on": 2,
+        "color": "#14ff53",
+        "mode_on": 1,
         "position": 2
     },
     "modes": [
@@ -10,8 +10,8 @@
             "id": 1,
             "name": "random",
             "interval": {
-                "start" : 2,
-                "end" : 5
+                "start" : 1,
+                "end" : 3
             }
         },
         {

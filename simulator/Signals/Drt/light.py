@@ -18,20 +18,20 @@ class AlertLight(object):
         self.mode_on = Mode.build(self)
         self.position = Position.build(self, width, height)
 
-        self.is_render = False
+        self.is_rendered = False
 
     def toggle(self):
         self.mode_on.toggle()
 
     def turn_on(self):
         self.position.refresh()
-        self.is_render = True
+        self.is_rendered = True
 
     def turn_off(self):
-        self.is_render = False
+        self.is_rendered = False
 
     def render(self, display):
-        if self.is_render:
+        if self.is_rendered:
             pygame.draw.circle(
                 display,
                 self.color,
