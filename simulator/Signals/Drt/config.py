@@ -66,3 +66,15 @@ class DRTConfiguration():
 
     def position_name(self):
         return self.position().get('name')
+
+    def quadrants(self):
+        if any(self.chosen_quadrants()):
+            return list(
+                map(int, self.chosen_quadrants())
+            )
+        else:
+            raise Exception('You must choose at least one quadrant')
+
+    def chosen_quadrants(self):
+        quadrants = self.position().get('quadrants')
+        return [number for number, chosen in quadrants.items() if chosen]

@@ -1,77 +1,82 @@
 import random
 
-
-class Point():
-
-    MARGIN = 10
-
-    def __init__(self, max_value, size):
-        self.max_value = max_value
-        self.size = size
-
-    def calculate_position(self, value):
-        if self.is_outside_display(value):
-            return self.offset(value)
-        else:
-            return value
-
-    def is_outside_display(self, value):
-        return self.is_minor_offset(value) or self.is_max_offset(value)
-
-    def is_minor_offset(self, value):
-        return value - self.size < 0
-
-    def is_max_offset(self, value):
-        return value + self.size > self.max_value
-
-    def offset(self, value):
-        if self.is_minor_offset(value):
-            return value + self.size + self.MARGIN
-        elif self.is_max_offset(value):
-            return value - self.size - self.MARGIN
+from .points import RandomPoint, ManualPoint
 
 
-class RandomPoint(Point):
+class Quadrant():
 
-    def coord(self):
-        random_value = random.randrange(self.max_value)
-        return self.calculate_position(random_value)
+    ROWS = 3
+    COLS = 3
 
+    def __init__(self, number, width, height):
+        self.number = number
+        self.width = width / self.COLS
+        self.height = height / self.ROWS
 
-class ManualPoint(Point):
+    def x_coords(self):
+        return self.start_x(), self.end_x()
 
-    def coord(self):
-        return self.calculate_position(self.max_value)
+    def y_coords(self):
+        return self.start_y(), self.end_y()
+
+    def start_x(self):
+        return self.width * self.offset_x()
+
+    def offset_x(self):
+        return (self.number - 1) % self.COLS
+
+    def end_x(self):
+        return self.start_x() + self.width
+
+    def start_y(self):
+        return self.height * self.offset_y()
+
+    def offset_y(self):
+        return (self.number - 1) // self.COLS
+
+    def end_y(self):
+        return self.start_y() + self.height
 
 
 class Position():
-    def __init__(self, drt, width, height, Point):
-        self.x = Point(width, drt.size)
-        self.y = Point(height, drt.size)
-        self.resolution = self.x.coord(), self.y.coord()
+    def __init__(self, drt, width, height):
+        self.drt = drt
+        self.width, self.height = width, height
 
     @classmethod
     def build(cls, drt, width, height):
-        if drt.config.position_name() == "random":
-            return RandomPosition(
-                drt,
-                width,
-                height,
-                RandomPoint
-            )
-        else:
-            return cls(
-                drt,
-                width,
-                height,
-                ManualPoint
-            )
+        config = drt.config.position_name()
+        position = RandomPosition if config == "random" else FixedPosition
+        return position(drt, width, height)
 
     def refresh(self):
         pass
 
 
+class FixedPosition(Position):
+    def __init__(self, drt, width, height):
+        super(FixedPosition, self).__init__(drt, width, height)
+
+        self.x = ManualPoint(width, drt.size)
+        self.y = ManualPoint(height, drt.size)
+        self.resolution = self.x.coord(), self.y.coord()
+
+
 class RandomPosition(Position):
 
+    def __init__(self, drt, width, height):
+        super(RandomPosition, self).__init__(drt, width, height)
+
+        self.size = drt.size
+        self.quadrants = self.drt.config.quadrants()
+
+        self.refresh()
+
     def refresh(self):
+        quadrant_number = random.choice(self.quadrants)
+        quadrant = Quadrant(quadrant_number, self.width, self.height)
+
+        self.x = RandomPoint(*quadrant.x_coords(), self.size)
+        self.y = RandomPoint(*quadrant.y_coords(), self.size)
+
         self.resolution = self.x.coord(), self.y.coord()

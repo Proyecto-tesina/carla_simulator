@@ -1,9 +1,9 @@
 {
     "config": {
-        "size": 200,
+        "size": 20,
         "color": "#ffffff",
-        "mode_on": 20,
-        "position": 2
+        "mode_on": 2,
+        "position": 1
     },
     "modes": [
         {
@@ -23,9 +23,16 @@
         {
             "id": 1,
             "name": "random",
-            "region": {
-                "x": 1024,
-                "y": 720
+            "quadrants": {
+                "1" : true,
+                "2" : true,
+                "3" : true,
+                "4" : true,
+                "5" : false,
+                "6" : true,
+                "7" : true,
+                "8" : true,
+                "9" : true
             }
         },
         {
