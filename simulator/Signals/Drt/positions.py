@@ -57,8 +57,11 @@ class FixedPosition(Position):
     def __init__(self, drt, width, height):
         super(FixedPosition, self).__init__(drt, width, height)
 
-        self.x = ManualPoint(0, width, drt.size)
-        self.y = ManualPoint(0, height, drt.size)
+        self.coords = self.drt.config.fixed_coords()
+
+        self.x = ManualPoint(0, width, self.coords[0], drt.size)
+        self.y = ManualPoint(0, height, self.coords[1], drt.size)
+
         self.resolution = self.x.coord(), self.y.coord()
 
 

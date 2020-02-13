@@ -50,5 +50,9 @@ class RandomPoint(Point):
 
 class ManualPoint(Point):
 
+    def __init__(self, min_value, max_value, coord, size):
+        super(ManualPoint, self).__init__(min_value, max_value, size)
+        self._coord = coord
+
     def coord(self):
-        return self.calculate_position(self.max_value)
+        return self.calculate_position(self._coord)

@@ -2,8 +2,8 @@
     "config": {
         "size": 20,
         "color": "#ffffff",
-        "mode_on": 1,
-        "position": 1
+        "mode_on": 2,
+        "position": 2
     },
     "modes": [
         {
@@ -39,8 +39,8 @@
             "id": 2,
             "name": "fixed",
             "coords": {
-                "x": 1024,
-                "y": 720
+                "x": 0,
+                "y": 0
             }
         }
     ]
