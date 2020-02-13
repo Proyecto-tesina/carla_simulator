@@ -2,7 +2,7 @@
     "config": {
         "size": 20,
         "color": "#ffffff",
-        "mode_on": 2,
+        "mode_on": 1,
         "position": 1
     },
     "modes": [
@@ -27,9 +27,9 @@
                 "1" : true,
                 "2" : true,
                 "3" : true,
-                "4" : true,
+                "4" : false,
                 "5" : false,
-                "6" : true,
+                "6" : false,
                 "7" : true,
                 "8" : true,
                 "9" : true
