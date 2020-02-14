@@ -1,10 +1,8 @@
 import pygame
 
-from .modes import Mode
-
-from .positions import Position
-
 from .config import DRTConfiguration
+from .modes import Mode
+from .positions import Position
 
 
 class AlertLight(object):
