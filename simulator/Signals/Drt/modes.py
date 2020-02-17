@@ -11,13 +11,12 @@ class Mode(ABC):
     def __init__(self, drt):
         self.drt = drt
         self.monitor = Monitor()
-        self.mode_name = None
 
     @classmethod
     def build(cls, drt):
-        cls.mode_name = drt.config.mode_name()
+        mode_name = drt.config.mode_name()
 
-        if cls.mode_name == "random":
+        if mode_name == "random":
             return RandomMode(drt)
         else:
             return ManualMode(drt)
