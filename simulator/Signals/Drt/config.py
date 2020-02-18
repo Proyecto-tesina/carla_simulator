@@ -23,6 +23,9 @@ class DRTConfiguration():
     def color(self):
         return self.config.get('color')
 
+    def duration(self):
+        return self.config.get('duration')
+
     def mode(self):
         try:
             return list(filter(

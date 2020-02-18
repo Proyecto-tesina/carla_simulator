@@ -1,16 +1,16 @@
 import logging
-import random
-import time
-from abc import ABC, abstractmethod
-from threading import Thread
+
+from .timer import TimerOn, TimerOff
+
+from abc import ABC
 
 from .Monitor.monitor import Monitor
 
+from threading import Lock
+
 
 class Mode(ABC):
-    def __init__(self, drt):
-        self.drt = drt
-        self.monitor = Monitor()
+    render_lock = Lock()
 
     @classmethod
     def build(cls, drt):
@@ -21,19 +21,34 @@ class Mode(ABC):
         else:
             return ManualMode(drt)
 
-    def toggle(self):
-        if self.drt.is_rendered:
-            self.turn_off_light()
-        else:
-            self.turn_on_light()
+    def __init__(self, drt):
+        self.drt = drt
+        self.monitor = Monitor()
+        self.timer_off = TimerOff
 
-    @abstractmethod
+    def toggle(self):
+        """Entry by User event"""
+        self.render_lock.acquire()
+
+        if self.drt.is_rendered:
+            self.toggle_rendered()
+        else:
+            self.toggle_not_rendered()
+
+        self.render_lock.release()
+
+    def toggle_rendered(self):
+        self.turn_off_light()
+        logging.info('Light off by User')
+
     def turn_off_light(self):
+        self.drt.turn_off()
         self.monitor.add_turn_off_timestamp()
 
-    @abstractmethod
     def turn_on_light(self):
+        self.drt.turn_on()
         self.monitor.add_turn_on_timestamp()
+        self.timer_off(self).start()
 
 
 class RandomMode(Mode):
@@ -42,37 +57,22 @@ class RandomMode(Mode):
 
         self.interval = self.drt.config.interval()
         self.region = self.drt.config.region()
+        self.timer_on = TimerOn
 
-        self.start_timer()
+        self.timer_on(self).start()
 
     def turn_off_light(self):
         super().turn_off_light()
-        self.drt.turn_off()
-        self.start_timer()
+        self.timer_on(self).start()
 
-    def turn_on_light(self):
-        # If you try to turn on light manually when in random mode it will count as mistake
+    def toggle_not_rendered(self):
+        # If you try to turn on light manually when
+        # in random mode it will count as mistake
         self.monitor.add_mistake_timestamp()
         logging.info('The light wasn\'t on, be careful!')
-
-    def start_timer(self):
-        Thread(target=self._schedule_light).start()
-
-    def _schedule_light(self):
-        wait_time = random.randint(*self.interval)
-        logging.info(f'Making new shedulling for {wait_time}s')
-
-        time.sleep(wait_time)
-        self.drt.turn_on()
-        self.monitor.add_turn_on_timestamp()
 
 
 class ManualMode(Mode):
 
-    def turn_off_light(self):
-        super().turn_off_light()
-        self.drt.turn_off()
-
-    def turn_on_light(self):
-        super().turn_on_light()
-        self.drt.turn_on()
+    def toggle_not_rendered(self):
+        self.turn_on_light()

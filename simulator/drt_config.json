@@ -2,8 +2,9 @@
     "config": {
         "size": 20,
         "color": "#14ff53",
-        "mode_on": 1,
-        "position": 2
+        "duration": 2,
+        "mode_on": 2,
+        "position": 1
     },
     "modes": [
         {
@@ -24,15 +25,15 @@
             "id": 1,
             "name": "random",
             "quadrants": {
-                "1" : true,
-                "2" : true,
-                "3" : true,
+                "1" : false,
+                "2" : false,
+                "3" : false,
                 "4" : false,
-                "5" : false,
+                "5" : true,
                 "6" : false,
-                "7" : true,
-                "8" : true,
-                "9" : true
+                "7" : false,
+                "8" : false,
+                "9" : false
             }
         },
         {
