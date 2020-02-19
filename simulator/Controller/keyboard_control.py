@@ -19,6 +19,7 @@ try:
     from pygame.locals import K_TAB
     from pygame.locals import K_UP
     from pygame.locals import K_a
+    from pygame.locals import K_b
     from pygame.locals import K_c
     from pygame.locals import K_d
     from pygame.locals import K_h
@@ -65,7 +66,9 @@ class KeyboardControl(object):
                 elif event.key == K_h or (event.key == K_SLASH and pygame.key.get_mods() & KMOD_SHIFT):
                     world.hud.help.toggle()
                 elif event.key == K_n:
-                    world.hud.drt_alert.toggle()
+                    world.hud.drt_alert.turn_on_by_user()
+                elif event.key == K_b:
+                    world.hud.drt_alert.turn_off_by_user()
                 elif event.key == K_TAB:
                     world.camera_manager.toggle_camera()
                 elif event.key == K_c and pygame.key.get_mods() & KMOD_SHIFT:

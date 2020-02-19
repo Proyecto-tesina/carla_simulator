@@ -11,11 +11,9 @@ import logging
 
 class Timer(ABC):
 
-    def __init__(self, mode):
+    def __init__(self, drt):
         self.thread = Thread(target=self.switch_light)
-        self.drt = mode.drt
-        self.mode = mode
-        self.render_lock = mode.render_lock
+        self.drt = drt
 
     def start(self):
         self.thread.start()
@@ -43,22 +41,11 @@ class TimerOff(Timer):
         return self.drt.duration
 
     def _init_sleep(self):
-        self.last_time_on = self.drt.last_time_on
-        logging.info(f'Started scheduler light off {self.duration}s')
+        self.last_time_on = self.drt.last_time_on()
+        logging.info(f'Started scheduler light OFF in {self.duration}s')
 
     def _end_sleep(self):
-        self.render_lock.acquire()
-
-        if self.drt.is_rendered and self.not_turned_on():
-            self.mode.turn_off_light()
-            logging.info('Light off by Timer')
-        else:
-            logging.info('Discard timer')
-
-        self.render_lock.release()
-
-    def not_turned_on(self):
-        return self.last_time_on == self.drt.last_time_on
+        self.drt.turn_off_by_timer(self)
 
 
 class TimerOn(Timer):
@@ -68,7 +55,7 @@ class TimerOn(Timer):
         return random.randint(*self.mode.interval)
 
     def _init_sleep(self):
-        logging.info(f'Making new shedulling for {self.duration}s')
+        logging.info(f'Started scheduler light ON in {self.duration}s')
 
     def _end_sleep(self):
-        self.mode.turn_on_light()
+        self.drt.turn_on_by_timer()

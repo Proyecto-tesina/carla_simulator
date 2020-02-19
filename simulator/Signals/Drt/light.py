@@ -1,10 +1,9 @@
 import pygame
 
-from datetime import datetime
-
 from .config import DRTConfiguration
 from .modes import Mode
 from .positions import Position
+from .state import On, Off
 
 
 class AlertLight(object):
@@ -16,29 +15,53 @@ class AlertLight(object):
         self.size = self.config.size()
         self.color = pygame.Color(self.config.color())
 
-        self.last_time_on = None
-
         self.mode = Mode.build(self)
         self.position = Position.build(self, width, height)
 
-        self.is_rendered = False
+        self.set_off_state()
 
-    def toggle(self):
-        self.mode.toggle()
+    # Switch states
 
-    def turn_on(self):
-        self.last_time_on = datetime.today()
+    def set_on_state(self):
+        self.state = On(self)
         self.position.refresh()
-        self.is_rendered = True
+        self.mode.light_on()
 
-    def turn_off(self):
-        self.is_rendered = False
+    def set_off_state(self):
+        self.state = Off(self)
+        self.mode.light_off()
+
+    # Renders
+
+    def show_light(self, display):
+        pygame.draw.circle(
+            display,
+            self.color,
+            self.position.resolution,
+            self.size
+        )
 
     def render(self, display):
-        if self.is_rendered:
-            pygame.draw.circle(
-                display,
-                self.color,
-                self.position.resolution,
-                self.size
-            )
+        self.state.render(display)
+
+    # Entrys for actors:
+
+    def turn_on_by_user(self):
+        self.mode.turn_on_by_user()
+
+    def turn_on_by_timer(self):
+        self.mode.turn_on_by_timer()
+
+    def turn_off_by_user(self):
+        self.mode.turn_off_by_user()
+
+    def turn_off_by_timer(self, timer):
+        self.mode.turn_off_by_timer(timer)
+
+    # Querys
+
+    def is_last_time_on(self, last_time):
+        return self.state.is_last_time_on(last_time)
+
+    def last_time_on(self):
+        return self.state.last_time_on

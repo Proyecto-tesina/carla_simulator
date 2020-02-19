@@ -1,16 +1,15 @@
-import logging
-
 from .timer import TimerOn, TimerOff
-
-from abc import ABC
-
-from .Monitor.monitor import Monitor
 
 from threading import Lock
 
+from abc import ABC
+
+import logging
+
 
 class Mode(ABC):
-    render_lock = Lock()
+
+    state_lock = Lock()
 
     @classmethod
     def build(cls, drt):
@@ -23,32 +22,30 @@ class Mode(ABC):
 
     def __init__(self, drt):
         self.drt = drt
-        self.monitor = Monitor()
         self.timer_off = TimerOff
 
-    def toggle(self):
-        """Entry by User event"""
-        self.render_lock.acquire()
+    def turn_off_by_user(self):
+        self.state_lock.acquire()
 
-        if self.drt.is_rendered:
-            self.toggle_rendered()
+        self.drt.state.turn_off_by_user()
+
+        self.state_lock.release()
+
+    def turn_off_by_timer(self, timer):
+        self.state_lock.acquire()
+
+        if self.not_turned_on(timer):
+            self.drt.state.turn_off_by_timer()
         else:
-            self.toggle_not_rendered()
+            logging.info('Discard TIMER')
 
-        self.render_lock.release()
+        self.state_lock.release()
 
-    def toggle_rendered(self):
-        self.turn_off_light()
-        logging.info('Light off by User')
+    def not_turned_on(self, timer):
+        return self.drt.is_last_time_on(timer.last_time_on)
 
-    def turn_off_light(self):
-        self.drt.turn_off()
-        self.monitor.add_turn_off_timestamp()
-
-    def turn_on_light(self):
-        self.drt.turn_on()
-        self.monitor.add_turn_on_timestamp()
-        self.timer_off(self).start()
+    def light_on(self):
+        self.timer_off(self.drt).start()
 
 
 class RandomMode(Mode):
@@ -56,23 +53,27 @@ class RandomMode(Mode):
         super(RandomMode, self).__init__(drt)
 
         self.interval = self.drt.config.interval()
-        self.region = self.drt.config.region()
+
         self.timer_on = TimerOn
-
         self.timer_on(self).start()
 
-    def turn_off_light(self):
-        super().turn_off_light()
-        self.timer_on(self).start()
+    def turn_on_by_user(self):
+        logging.info('Invalid "ON by USER" option in Random Mode')
 
-    def toggle_not_rendered(self):
-        # If you try to turn on light manually when
-        # in random mode it will count as mistake
-        self.monitor.add_mistake_timestamp()
-        logging.info('The light wasn\'t on, be careful!')
+    def turn_on_by_timer(self):
+        self.drt.state.turn_on_by_timer()
+
+    def light_off(self):
+        self.timer_on(self.drt).start()
 
 
 class ManualMode(Mode):
 
-    def toggle_not_rendered(self):
-        self.turn_on_light()
+    def turn_on_by_user(self):
+        self.drt.state.turn_on_by_user()
+
+    def turn_on_by_timer(self):
+        logging.info('Invalid "ON by TIMER" option in Manual Mode')
+
+    def light_off(self):
+        pass
