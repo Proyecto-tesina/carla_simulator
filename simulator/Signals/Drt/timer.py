@@ -12,7 +12,7 @@ import logging
 class Timer(ABC):
 
     def __init__(self, drt):
-        self.thread = Thread(target=self.switch_light)
+        self.thread = Thread(target=self.switch_light, daemon=True)
         self.drt = drt
 
     def start(self):
