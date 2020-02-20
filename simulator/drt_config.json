@@ -3,7 +3,7 @@
         "size": 20,
         "color": "#14ff53",
         "duration": 2,
-        "mode_on": 2,
+        "mode_on": 1,
         "position": 1
     },
     "modes": [

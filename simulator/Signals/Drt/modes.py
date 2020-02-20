@@ -52,10 +52,7 @@ class RandomMode(Mode):
     def __init__(self, drt):
         super(RandomMode, self).__init__(drt)
 
-        self.interval = self.drt.config.interval()
-
         self.timer_on = TimerOn
-        self.timer_on(self).start()
 
     def turn_on_by_user(self):
         logging.info('Invalid "ON by USER" option in Random Mode')

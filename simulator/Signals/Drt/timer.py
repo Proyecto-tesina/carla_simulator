@@ -52,7 +52,7 @@ class TimerOn(Timer):
 
     @property
     def duration(self):
-        return random.randint(*self.mode.interval)
+        return random.randint(*self.drt.interval)
 
     def _init_sleep(self):
         logging.info(f'Started scheduler light ON in {self.duration}s')

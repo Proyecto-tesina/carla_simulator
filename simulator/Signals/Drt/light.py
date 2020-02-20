@@ -12,6 +12,7 @@ class AlertLight(object):
         self.config = DRTConfiguration()
 
         self.duration = self.config.duration()
+        self.interval = self.config.interval()
         self.size = self.config.size()
         self.color = pygame.Color(self.config.color())
 
