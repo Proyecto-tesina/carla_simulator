@@ -1,7 +1,7 @@
 import json
 
 
-class MonitorParser:
+class MonitorSerializer:
     def __init__(self, path):
         self.path = path
 

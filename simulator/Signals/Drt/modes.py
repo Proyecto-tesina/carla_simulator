@@ -1,10 +1,8 @@
-from .timer import TimerOn, TimerOff
-
+import logging
+from abc import ABC
 from threading import Lock
 
-from abc import ABC
-
-import logging
+from .timer import TimerOff, TimerOn
 
 
 class Mode(ABC):
@@ -13,7 +11,7 @@ class Mode(ABC):
 
     @classmethod
     def build(cls, drt):
-        mode_name = drt.config.mode_name()
+        mode_name = drt.get_current_mode_name()
 
         if mode_name == "random":
             return RandomMode(drt)
@@ -26,9 +24,7 @@ class Mode(ABC):
 
     def turn_off_by_user(self):
         self.state_lock.acquire()
-
         self.drt.state.turn_off_by_user()
-
         self.state_lock.release()
 
     def turn_off_by_timer(self, timer):
@@ -51,7 +47,6 @@ class Mode(ABC):
 class RandomMode(Mode):
     def __init__(self, drt):
         super(RandomMode, self).__init__(drt)
-
         self.timer_on = TimerOn
 
     def turn_on_by_user(self):

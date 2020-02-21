@@ -26,7 +26,8 @@ try:
         sys.version_info.minor,
         'win-amd64' if os.name == 'nt' else 'linux-x86_64'))[0])
 except IndexError:
-    pass
+    raise ImportError(
+        'cannot import carla module, make sure the path to ".egg" file is correct')
 
 
 # ==============================================================================

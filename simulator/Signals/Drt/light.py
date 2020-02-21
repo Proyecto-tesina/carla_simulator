@@ -1,18 +1,18 @@
 import pygame
 
-from .config import DRTConfiguration
+from .config_parser import ConfigParser
 from .modes import Mode
 from .positions import Position
-from .state import On, Off
+from .light_state import On, Off
 
 
 class AlertLight(object):
 
     def __init__(self, width, height):
-        self.config = DRTConfiguration()
+        self.config = ConfigParser()
 
-        self.duration = self.config.duration()
-        self.interval = self.config.interval()
+        self.duration = self.config.light_on_duration()
+        self.interval = self.config.light_off_interval()
         self.size = self.config.size()
         self.color = pygame.Color(self.config.color())
 
@@ -45,7 +45,7 @@ class AlertLight(object):
     def render(self, display):
         self.state.render(display)
 
-    # Entrys for actors:
+    # Entrys for actors
 
     def turn_on_by_user(self):
         self.mode.turn_on_by_user()
@@ -66,3 +66,6 @@ class AlertLight(object):
 
     def last_time_on(self):
         return self.state.last_time_on
+
+    def get_current_mode_name(self):
+        return self.config.mode_name()

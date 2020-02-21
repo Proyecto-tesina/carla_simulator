@@ -69,7 +69,6 @@ class RandomPosition(Position):
 
     def __init__(self, drt, width, height):
         super(RandomPosition, self).__init__(drt, width, height)
-
         self.size = drt.size
         self.quadrants = self.drt.config.quadrants()
 

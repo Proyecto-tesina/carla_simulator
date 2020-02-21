@@ -1,12 +1,8 @@
-from abc import ABC, abstractproperty
-
-from threading import Thread
-
-import random
-
-import time
-
 import logging
+import random
+import time
+from abc import ABC, abstractproperty
+from threading import Thread
 
 
 class Timer(ABC):

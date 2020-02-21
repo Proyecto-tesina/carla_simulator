@@ -1,7 +1,7 @@
 import json
 
 
-class DRTConfiguration():
+class ConfigParser():
     PATH = 'simulator/drt_config.json'
 
     def __init__(self):
@@ -23,8 +23,8 @@ class DRTConfiguration():
     def color(self):
         return self.config.get('color')
 
-    def duration(self):
-        return self.config.get('duration')
+    def light_on_duration(self):
+        return self.config.get('light_on_duration')
 
     def mode(self):
         try:
@@ -39,10 +39,10 @@ class DRTConfiguration():
         return self.mode().get('name')
 
     def id_mode(self):
-        return self.config.get('mode_on')
+        return self.config.get('mode_id')
 
-    def interval(self):
-        interval = self.mode().get('interval')
+    def light_off_interval(self):
+        interval = self.mode().get('light_off_interval')
         return tuple(interval.values())
 
     def position(self):

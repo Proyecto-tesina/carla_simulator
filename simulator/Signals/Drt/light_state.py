@@ -1,10 +1,8 @@
-from .Monitor.monitor import Monitor
-
+import logging
 from abc import ABC, abstractmethod
-
 from datetime import datetime
 
-import logging
+from .Monitor.monitor import Monitor
 
 
 class DRTState(ABC):
@@ -52,20 +50,20 @@ class On(DRTState):
         self.last_time_on = datetime.today()
 
     def turn_on_by_user(self):
-        logging.info('Discard USER - Light ON already')
+        logging.info('Discarded USER interaction - Light is already on')
 
     def turn_on_by_timer(self):
-        logging.info('Discard TIMER - Light ON already')
+        logging.info('Discarded TIMER interaction - Light is already on')
 
     def turn_off_by_user(self):
         self._turn_off()
         self.monitor.add_turn_off_timestamp()
-        logging.info('Light OFF by USER')
+        logging.info('Turned light off by USER')
 
     def turn_off_by_timer(self):
         self._turn_off()
         # self.monitor.add_light_lost_timestamp()
-        logging.info('Light OFF by TIMER')
+        logging.info('Turned light off by TIMER')
 
     def render(self, display):
         self.drt.show_light(display)
@@ -75,15 +73,15 @@ class Off(DRTState):
 
     def turn_on_by_user(self):
         self._turn_on()
-        logging.info('Light ON by USER')
+        logging.info('Turned light on by USER')
 
     def turn_on_by_timer(self):
         self._turn_on()
-        logging.info('Light ON by TIMER')
+        logging.info('Turned light on by TIMER')
 
     def turn_off_by_user(self):
         self.monitor.add_mistake_timestamp()
-        logging.info('Discard USER - Mistake added')
+        logging.info('Light is off - Mistake added')
 
     def turn_off_by_timer(self):
-        logging.info('Discard TIMER')
+        logging.info('Discarded TIMER interaction - Light is already off')

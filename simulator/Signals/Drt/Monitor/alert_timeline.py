@@ -41,10 +41,10 @@ class AlertTimeLine:
         return list(map(lambda mistake: mistake.isoformat(), self.mistakes))
 
     def get_response_time(self):
-        """ Returns the time between the end and start of timeline represented in microseconds """
+        """ Returns the time between the end and start of timeline represented in miliseconds """
         end_time = self.turn_off_time if self.turn_off_time else self.light_lost_time
         response_time = end_time - self.turn_on_time
-        return response_time.microseconds
+        return response_time.microseconds / 1000
 
     def get_cant_mistakes(self):
         return len(self.mistakes)

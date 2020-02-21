@@ -1,12 +1,12 @@
 from .alert_timeline import AlertTimeLine
-from .parser import MonitorParser
+from .serializer import MonitorSerializer
 
 
 class Monitor:
     def __init__(self):
         self.current_timeline = None
         self.alert_timelines = []
-        self.parser = MonitorParser(path='simulator/monitor_results.json')
+        self.parser = MonitorSerializer(path='simulator/monitor_results.json')
 
     def add_turn_on_timestamp(self):
         self.current_timeline = AlertTimeLine()
