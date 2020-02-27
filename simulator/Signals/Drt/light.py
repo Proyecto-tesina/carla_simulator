@@ -1,9 +1,7 @@
 import pygame
 
-from .config_parser import ConfigParser
-from .modes import Mode
-from .positions import Position
-from .light_state import On, Off
+from .configuration import ConfigParser
+from .components import Mode, Position, On, Off
 
 
 class AlertLight(object):

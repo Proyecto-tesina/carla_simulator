@@ -1,6 +1,6 @@
 import random
 
-from .points import RandomPoint, ManualPoint
+from .points import ManualPoint, RandomPoint
 
 
 class Quadrant():

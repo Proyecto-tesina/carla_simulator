@@ -2,7 +2,7 @@ import logging
 from abc import ABC, abstractmethod
 from datetime import datetime
 
-from .Monitor.monitor import Monitor
+from ..monitor import Monitor
 
 
 class DRTState(ABC):
