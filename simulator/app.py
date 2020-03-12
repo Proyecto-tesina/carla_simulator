@@ -40,14 +40,11 @@ import logging
 
 from Controller.wheel_control import WheelControl
 from Controller.keyboard_control import KeyboardControl
-
 from Display.resolution import CustomResolution, MultimonitorResolution
+from Hud.hud import Hud
+from World.world import World
 
 import carla
-
-from Hud.hud import Hud
-
-from World.world import World
 
 try:
     import pygame
@@ -65,26 +62,21 @@ class App():
         self.world = None
 
         try:
-            self.__init_client(args)
-
-            self.__init_display(args)
-
-            self.__init_hud(args)
-
-            self.__init_world(args)
-
-            self.__init_controller(args)
-
+            self._init_client(args)
+            self._init_display(args)
+            self._init_hud(args)
+            self._init_world(args)
+            self._init_controller(args)
             self.clock = pygame.time.Clock()
             self.start()
         finally:
             self.stop()
 
-    def __init_client(self, args):
+    def _init_client(self, args):
         self.client = carla.Client(args.host, args.port)
         self.client.set_timeout(2.0)
 
-    def __init_display(self, args):
+    def _init_display(self, args):
         self.resolution = args.resolution
 
         self.display = pygame.display.set_mode(
@@ -92,16 +84,16 @@ class App():
             self.resolution.mode()
         )
 
-    def __init_hud(self, args):
+    def _init_hud(self, args):
         self.hud = Hud(*self.resolution.size())
 
-    def __init_controller(self, args):
+    def _init_controller(self, args):
         self.controller = args.controller(
             self.world,
             args.autopilot
         )
 
-    def __init_world(self, args):
+    def _init_world(self, args):
         self.world = World(
             self.client.get_world(),
             self.hud,
@@ -138,8 +130,8 @@ def main():
     argparser.add_argument(
         '-v', '--verbose',
         action='store_true',
-        dest='debug',
-        help='print debug information')
+        dest='info',
+        help='print experiment information')
     argparser.add_argument(
         '--host',
         metavar='H',
@@ -194,7 +186,7 @@ def main():
 
     args.controller = WheelControl if args.wheel else KeyboardControl
 
-    log_level = logging.DEBUG if args.debug else logging.INFO
+    log_level = logging.INFO if args.info else logging.WARNING
     logging.basicConfig(format='%(levelname)s: %(message)s', level=log_level)
 
     logging.info('listening to server %s:%s', args.host, args.port)
@@ -207,7 +199,6 @@ def main():
 
     try:
         App(args)
-
     except KeyboardInterrupt:
         print('\nCancelled by user. Bye!')
 
