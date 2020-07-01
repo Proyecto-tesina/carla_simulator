@@ -9,3 +9,4 @@ PySide2==5.13.1
 screeninfo==0.6.1
 shiboken2==5.13.1
 Werkzeug==0.16.0
+opencv-python

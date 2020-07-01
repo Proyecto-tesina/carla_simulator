@@ -53,7 +53,7 @@ computed_results = {
     'end_events': len(parsed_results['end']),
     'lost_events': len(parsed_results['lost']),
     'mistake_events': len(parsed_results['mistake']),
-    'average_response_time': calculate_average(response_times),
+    'average_response_time (ms)': calculate_average(response_times),
 }
 
 print(json.dumps(computed_results, indent=4))

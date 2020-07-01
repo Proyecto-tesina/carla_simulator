@@ -15,6 +15,7 @@ Use ARROWS or WASD keys for control.
     `            : next sensor
     [1-9]        : change to sensor [1-9]
     C            : change weather (Shift+C reverse)
+    B            : action key for DRT
     Backspace    : change vehicle
 
     R            : toggle recording images to disk
