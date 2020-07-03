@@ -10,7 +10,7 @@ class Player_Monitor:
         self.steer = None
         self.events = []
 
-    def tick(self, world):
+    def tick(self, world, clock):
         player = world.player
         velocity = player.get_velocity()
         control = player.get_control()
@@ -36,7 +36,6 @@ class Player_Monitor:
             3.6 * math.sqrt(velocity.x**2 + velocity.y**2 + velocity.z**2))
         if velocity_in_km != self.velocity:
             self.value_changed = True
-            print(velocity_in_km)
             if velocity_in_km == 0:
                 self.events.append(
                     (datetime.now().isoformat(), 'Stoped'))

@@ -27,7 +27,8 @@ class World(object):
         self.world.on_tick(hud.on_world_tick)
         self.recording_enabled = False
         self.recording_start = 0
-        self.components = []
+        self.tick_subscribers = []
+        self.render_subscribers = []
 
     def restart(self):
         # Keep same camera config if the camera manager exists.
@@ -79,11 +80,12 @@ class World(object):
 
     def tick(self, clock):
         self.hud.tick(self, clock)
-        self.notify_components()
+        self.notify_tick_subscribers(clock)
 
     def render(self, display):
         self.camera_manager.render(display)
         self.hud.render(display)
+        self.notify_render_subscribers(display)
 
     def destroy_sensors(self):
         self.camera_manager.sensor.destroy()
@@ -101,12 +103,26 @@ class World(object):
             if actor is not None:
                 actor.destroy()
 
-    def add_component(self, component):
-        self.components.append(component)
+    def add_tick_subscriber(self, component):
+        self.tick_subscribers.append(component)
 
-    def remove_component(self, component):
-        self.components.remove(component)
+    def remove_tick_subscriber(self, component):
+        self.tick_subscribers.remove(component)
 
-    def notify_components(self):
-        for comp in self.components:
-            comp.tick(self)
+    def notify_tick_subscribers(self, clock):
+        for comp in self.tick_subscribers:
+            comp.tick(self, clock)
+
+    def add_render_subscriber(self, component):
+        self.render_subscribers.append(component)
+
+    def remove_render_subscriber(self, component):
+        self.render_subscribers.remove(component)
+
+    def notify_render_subscribers(self, display):
+        for comp in self.render_subscribers:
+            comp.render(display)
+
+    def parse_key_event(self, event):
+        for comp in self.render_subscribers:
+            comp.parse_key_event(event)
