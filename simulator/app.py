@@ -43,6 +43,7 @@ from Controller.keyboard_control import KeyboardControl
 from Display.resolution import CustomResolution, MultimonitorResolution
 from Hud.hud import Hud
 from World.world import World
+from Monitors.player_monitor import Player_Monitor
 
 import carla
 
@@ -88,17 +89,11 @@ class App():
         self.hud = Hud(*self.resolution.size())
 
     def _init_controller(self, args):
-        self.controller = args.controller(
-            self.world,
-            args.autopilot
-        )
+        self.controller = args.controller(self.world, args.autopilot)
 
     def _init_world(self, args):
-        self.world = World(
-            self.client.get_world(),
-            self.hud,
-            args
-        )
+        self.world = World(self.client.get_world(), self.hud, args)
+        self.world.add_component(Player_Monitor())
 
     def start(self):
         while True:
