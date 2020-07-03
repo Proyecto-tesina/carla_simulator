@@ -27,6 +27,7 @@ class World(object):
         self.world.on_tick(hud.on_world_tick)
         self.recording_enabled = False
         self.recording_start = 0
+        self.components = []
 
     def restart(self):
         # Keep same camera config if the camera manager exists.
@@ -78,6 +79,7 @@ class World(object):
 
     def tick(self, clock):
         self.hud.tick(self, clock)
+        self.notify_components()
 
     def render(self, display):
         self.camera_manager.render(display)
@@ -98,3 +100,13 @@ class World(object):
         for actor in actors:
             if actor is not None:
                 actor.destroy()
+
+    def add_component(self, component):
+        self.components.append(component)
+
+    def remove_component(self, component):
+        self.components.remove(component)
+
+    def notify_components(self):
+        for comp in self.components:
+            comp.tick(self)
