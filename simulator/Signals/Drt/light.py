@@ -1,7 +1,10 @@
 import pygame
+from pygame.locals import K_b
+from pygame.locals import K_n
 
 from .configuration import ConfigParser
 from .components import Mode, Position, On, Off
+from .monitor import Monitor
 
 
 class AlertLight(object):
@@ -17,6 +20,7 @@ class AlertLight(object):
         self.mode = Mode.build(self)
         self.position = Position.build(self, width, height)
 
+        self.monitor = Monitor()
         self.set_off_state()
 
     # Switch states
@@ -67,3 +71,9 @@ class AlertLight(object):
 
     def get_current_mode_name(self):
         return self.config.mode_name()
+
+    def parse_key_event(self, event):
+        if event.key == K_n:
+            self.turn_on_by_user()
+        elif event.key == K_b:
+            self.turn_off_by_user()

@@ -2,16 +2,13 @@ import logging
 from abc import ABC, abstractmethod
 from datetime import datetime
 
-from ..monitor import Monitor
-
 
 class DRTState(ABC):
-
-    monitor = Monitor()
     last_time_on = None
 
     def __init__(self, drt):
         self.drt = drt
+        self.monitor = drt.monitor
 
     def _turn_on(self):
         self.drt.set_on_state()

@@ -53,10 +53,10 @@ class WheelControl(KeyboardControl):
                 world.camera_manager.toggle_camera()
             elif event.button == 3:
                 world.next_weather()
-            elif event.button == self._drt_action_idx:
-                world.hud.drt_alert.toggle()
-            elif event.button == self._drt_schedule_idx:
-                world.hud.drt_alert.assert_drt()
+            # elif event.button == self._drt_action_idx:
+                # world.hud.drt_alert.toggle()
+            # elif event.button == self._drt_schedule_idx:
+                # world.hud.drt_alert.assert_drt()
             elif event.button == self._reverse_idx:
                 self._control.gear = 1 if self._control.reverse else -1
             elif event.button == 23:

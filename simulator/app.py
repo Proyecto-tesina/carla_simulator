@@ -44,6 +44,7 @@ from Display.resolution import CustomResolution, MultimonitorResolution
 from Hud.hud import Hud
 from World.world import World
 from Monitors.player_monitor import Player_Monitor
+from Signals.Drt.light import AlertLight
 
 import carla
 
@@ -93,7 +94,8 @@ class App():
 
     def _init_world(self, args):
         self.world = World(self.client.get_world(), self.hud, args)
-        self.world.add_component(Player_Monitor())
+        self.world.add_tick_subscriber(Player_Monitor())
+        self.world.add_render_subscriber(AlertLight(*self.resolution.size()))
 
     def start(self):
         while True:

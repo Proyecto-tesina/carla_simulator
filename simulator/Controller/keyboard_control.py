@@ -19,12 +19,10 @@ try:
     from pygame.locals import K_TAB
     from pygame.locals import K_UP
     from pygame.locals import K_a
-    from pygame.locals import K_b
     from pygame.locals import K_c
     from pygame.locals import K_d
     from pygame.locals import K_h
     from pygame.locals import K_m
-    from pygame.locals import K_n
     from pygame.locals import K_p
     from pygame.locals import K_q
     from pygame.locals import K_r
@@ -65,10 +63,6 @@ class KeyboardControl(object):
                     world.hud.toggle_info()
                 elif event.key == K_h or (event.key == K_SLASH and pygame.key.get_mods() & KMOD_SHIFT):
                     world.hud.help.toggle()
-                elif event.key == K_n:
-                    world.hud.drt_alert.turn_on_by_user()
-                elif event.key == K_b:
-                    world.hud.drt_alert.turn_off_by_user()
                 elif event.key == K_TAB:
                     world.camera_manager.toggle_camera()
                 elif event.key == K_c and pygame.key.get_mods() & KMOD_SHIFT:
@@ -137,6 +131,7 @@ class KeyboardControl(object):
                         world.player.set_autopilot(self._autopilot_enabled)
                         world.hud.notification('Autopilot %s' % (
                             'On' if self._autopilot_enabled else 'Off'))
+                world.parse_key_event(event)
             self.hook_parse_events(world, event)
 
         if not self._autopilot_enabled:
@@ -150,7 +145,7 @@ class KeyboardControl(object):
                     pygame.key.get_pressed(), clock.get_time())
             world.player.apply_control(self._control)
 
-    def hook_parse_events(self, event, world):
+    def hook_parse_events(self, world, event):
         pass
 
     def _parse_vehicle(self):
