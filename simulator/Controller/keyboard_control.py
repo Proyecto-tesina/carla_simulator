@@ -55,6 +55,9 @@ class KeyboardControl(object):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return True
+            if event.type == pygame.KEYUP:
+                if (event.key == K_ESCAPE) or (event.key == K_q and pygame.key.get_mods() & KMOD_CTRL):
+                    return True
             self.check_controller_keys(event, client, world)
 
         if not self._autopilot_enabled:
@@ -64,17 +67,14 @@ class KeyboardControl(object):
 
     def check_controller_keys(self, event, client, world):
         if event.type == pygame.KEYUP:
-            if (event.key == K_ESCAPE) or (event.key == K_q and pygame.key.get_mods() & KMOD_CTRL):
-                return True
-            else:
-                try:
-                    self.simple_key_events[event.key]()
-                except KeyError:
-                    pass
+            try:
+                self.simple_key_events[event.key]()
+            except KeyError:
+                pass
 
-                self.parse_world_events(event, world)
-                self.parse_recording_events(event, client, world)
-                self.parse_vehicle_events(event, world)
+            self.parse_world_events(event, world)
+            self.parse_recording_events(event, client, world)
+            self.parse_vehicle_events(event, world)
 
     def parse_world_events(self, event, world):
         if event.key == K_c and pygame.key.get_mods() & KMOD_SHIFT:
