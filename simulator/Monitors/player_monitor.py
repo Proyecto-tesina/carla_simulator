@@ -47,6 +47,6 @@ class Player_Monitor:
             self.velocity = velocity_in_km
 
     def write_file(self):
-        with open('player_actions.json', 'w') as file:
+        with open('results/player_actions.json', 'w') as file:
             json_str = json.dumps(self.events, indent=4)
             file.write(json_str)

@@ -13,7 +13,7 @@ events = []
 
 
 def write_to_file():
-    with open('detection_results.json', 'w') as file:
+    with open('results/face_detection_results.json', 'w') as file:
         json_str = json.dumps(events, indent=4)
         file.write(json_str)
 

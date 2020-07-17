@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 
 try:
-    with open('./simulator/monitor_results.json', 'r') as file:
+    with open('./results/monitor_results.json', 'r') as file:
         results = json.load(file)
 except FileNotFoundError as error:
     print('Couldn\'t retrieve file with monitor results')

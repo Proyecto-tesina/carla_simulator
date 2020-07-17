@@ -5,7 +5,7 @@ from datetime import datetime
 class Monitor:
     def __init__(self):
         self.events = []
-        self.path = 'simulator/monitor_results.json'
+        self.path = 'results/monitor_results.json'
 
     def add_turn_on_timestamp(self):
         event = (datetime.now().isoformat(), 'start')
