@@ -50,6 +50,8 @@ import carla
 
 try:
     import pygame
+    from pygame.locals import K_b
+    from pygame.locals import K_n
 except ImportError:
     raise RuntimeError(
         'cannot import pygame, make sure pygame package is installed')
@@ -69,6 +71,7 @@ class App():
             self._init_hud(args)
             self._init_world(args)
             self._init_controller(args)
+            self._init_components()
             self.clock = pygame.time.Clock()
             self.start()
         finally:
@@ -94,13 +97,25 @@ class App():
 
     def _init_world(self, args):
         self.world = World(self.client.get_world(), self.hud, args)
-        self.world.add_tick_subscriber(Player_Monitor())
-        self.world.add_render_subscriber(AlertLight(*self.resolution.size()))
+
+    def _init_components(self):
+        player_monitor = Player_Monitor()
+        alert_light = AlertLight(*self.resolution.size())
+
+        self.world.add_tick_subscriber(player_monitor)
+        self.world.add_render_subscriber(alert_light)
+
+        self.controller.register_event(K_n, alert_light.turn_on_by_user)
+        self.controller.register_event(K_b, alert_light.turn_off_by_user)
+
+        # Add these if playing with joystick
+        # self.controller.register_button(1, alert_light.turn_on_by_user)
+        # self.controller.register_button(6, alert_light.turn_on_by_user)
 
     def start(self):
         while True:
             self.clock.tick_busy_loop(60)
-            if self.controller.parse_events(self.client, self.world, self.clock):
+            if self.controller.check_events(self.client, self.world, self.clock):
                 return
             self.world.tick(self.clock)
             self.world.render(self.display)
@@ -144,11 +159,6 @@ def main():
         '-a', '--autopilot',
         action='store_true',
         help='enable autopilot')
-    argparser.add_argument(
-        '--filter',
-        metavar='PATTERN',
-        default='vehicle.*',
-        help='actor filter (default: "vehicle.*")')
     argparser.add_argument(
         '--rolename',
         metavar='NAME',

@@ -21,7 +21,7 @@ class World(object):
         self.camera_manager = None
         self._weather_presets = find_weather_presets()
         self._weather_index = 0
-        self._actor_filter = args.filter
+        self._actor_filter = "vehicle.*"
         self._gamma = args.gamma
         self.restart()
         self.world.on_tick(hud.on_world_tick)
@@ -122,7 +122,3 @@ class World(object):
     def notify_render_subscribers(self, display):
         for comp in self.render_subscribers:
             comp.render(display)
-
-    def parse_key_event(self, event):
-        for comp in self.render_subscribers:
-            comp.parse_key_event(event)
