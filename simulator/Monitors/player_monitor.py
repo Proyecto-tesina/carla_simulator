@@ -5,9 +5,8 @@ from datetime import datetime
 
 class Player_Monitor:
     def __init__(self):
-        self.transform = None
-        self.velocity = None
-        self.steer = None
+        self.velocity = 0
+        self.steer = 0
         self.events = []
 
     def tick(self, world, clock):
