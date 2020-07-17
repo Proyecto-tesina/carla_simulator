@@ -1,8 +1,7 @@
-from Controller.keyboard_control import KeyboardControl
-
 import math
-
 import sys
+
+from Controller.keyboard_control import KeyboardControl
 
 if sys.version_info >= (3, 0):
     from configparser import ConfigParser
@@ -18,7 +17,7 @@ except ImportError:
 
 class WheelControl(KeyboardControl):
     def __init__(self, world, start_in_autopilot):
-        super(WheelControl, self).__init__(world, start_in_autopilot)
+        super().__init__(world, start_in_autopilot)
         pygame.joystick.init()
 
         joystick_count = pygame.joystick.get_count()
@@ -32,40 +31,36 @@ class WheelControl(KeyboardControl):
         self._parser.read('./simulator/wheel_config.ini')
         self._steer_idx = self._parser.getint(
             'G29 Racing Wheel', 'steering_wheel')
-        self._throttle_idx = self._parser.getint(
-            'G29 Racing Wheel', 'throttle')
         self._brake_idx = self._parser.getint('G29 Racing Wheel', 'brake')
         self._reverse_idx = self._parser.getint('G29 Racing Wheel', 'reverse')
+        self._throttle_idx = self._parser.getint(
+            'G29 Racing Wheel', 'throttle')
         self._handbrake_idx = self._parser.getint(
             'G29 Racing Wheel', 'handbrake')
-        self._drt_action_idx = self._parser.getint(
-            'G29 Racing Wheel', 'drt_action')
-        self._drt_schedule_idx = self._parser.getint(
-            'G29 Racing Wheel', 'drt_schedule')
 
-    def hook_parse_events(self, world, event):
+        self.simple_joybuttons_events = {
+            0: world.restart,
+            9: world.hud.toggle_info,
+            2: world.camera_manager.toggle_camera,
+            23: world.camera_manager.next_sensor,
+            3: world.next_weather,
+        }
+
+    def check_controller_keys(self, event, client, world):
+        super().check_controller_keys(event, client, world)
         if event.type == pygame.JOYBUTTONDOWN:
-            if event.button == 0:
-                world.restart()
-            elif event.button == 9:
-                world.hud.toggle_info()
-            elif event.button == 2:
-                world.camera_manager.toggle_camera()
-            elif event.button == 3:
-                world.next_weather()
-            # elif event.button == self._drt_action_idx:
-                # world.hud.drt_alert.toggle()
-            # elif event.button == self._drt_schedule_idx:
-                # world.hud.drt_alert.assert_drt()
-            elif event.button == self._reverse_idx:
+            try:
+                self.simple_joybuttons_events[event.button]()
+            except KeyError:
+                pass
+            if event.button == self._reverse_idx:
                 self._control.gear = 1 if self._control.reverse else -1
-            elif event.button == 23:
-                world.camera_manager.next_sensor()
 
-    def _parse_vehicle(self):
+    def _parse_vehicle_keys(self, milliseconds):
+        super()._parse_vehicle_keys(milliseconds)
+
         numAxes = self._joystick.get_numaxes()
         jsInputs = [float(self._joystick.get_axis(i)) for i in range(numAxes)]
-        # print (jsInputs)
         jsButtons = [float(self._joystick.get_button(i)) for i in
                      range(self._joystick.get_numbuttons())]
 
@@ -93,7 +88,7 @@ class WheelControl(KeyboardControl):
         self._control.steer = steerCmd
         self._control.brake = brakeCmd
         self._control.throttle = throttleCmd
-
-        # toggle = jsButtons[self._reverse_idx]
-
         self._control.hand_brake = bool(jsButtons[self._handbrake_idx])
+
+    def register_button(self, button, callback):
+        self.simple_joybuttons_events.update({button: callback})
