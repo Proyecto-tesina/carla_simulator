@@ -1,31 +1,26 @@
-import json
+import requests as rq
 from datetime import datetime
 
 
 class Monitor:
     def __init__(self):
-        self.events = []
-        self.path = 'results/monitor_results.json'
+        self.URL = 'http://127.0.0.1:8000/events/drt/'
 
     def add_turn_on_timestamp(self):
-        event = (datetime.now().isoformat(), 'start')
-        self.events.append(event)
+        self.post_event('start')
 
     def add_mistake_timestamp(self):
-        event = (datetime.now().isoformat(), 'mistake')
-        self.events.append(event)
+        self.post_event('mistake')
 
     def add_light_lost_timestamp(self):
-        event = (datetime.now().isoformat(), 'lost')
-        self.events.append(event)
-        self.write_to_file(self.events)
+        self.post_event('lost')
 
     def add_turn_off_timestamp(self):
-        event = (datetime.now().isoformat(), 'end')
-        self.events.append(event)
-        self.write_to_file(self.events)
+        self.post_event('end')
 
-    def write_to_file(self, events):
-        with open(self.path, 'w') as file:
-            json_str = json.dumps(events, indent=4)
-            file.write(json_str)
+    def post_event(self, status):
+        body = {
+            'timestamp': datetime.now().isoformat(),
+            'status': status,
+        }
+        rq.post(self.URL, data=body)

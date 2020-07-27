@@ -1,10 +1,11 @@
-import json
+import requests as rq
 import math
 from datetime import datetime
 
 
 class Player_Monitor:
     def __init__(self):
+        self.URL = 'http://127.0.0.1:8000/events/player/'
         self.velocity = 0
         self.steer = 0
         self.events = []
@@ -18,7 +19,7 @@ class Player_Monitor:
         self.check_steer_event(control.steer)
         self.check_velocity_event(velocity, control.reverse)
         if self.value_changed:
-            self.write_file()
+            self.post_events()
 
     def check_steer_event(self, steer):
         # Usually the steer is 0 and this minimizes the writes on file
@@ -46,7 +47,11 @@ class Player_Monitor:
                     (datetime.now().isoformat(), 'Moving backwards'))
             self.velocity = velocity_in_km
 
-    def write_file(self):
-        with open('results/player_actions.json', 'w') as file:
-            json_str = json.dumps(self.events, indent=4)
-            file.write(json_str)
+    def post_events(self):
+        for event in self.events:
+            body = {
+                'timestamp': event[0],
+                'status': event[1],
+            }
+            rq.post(self.URL, data=body)
+        self.events.clear()

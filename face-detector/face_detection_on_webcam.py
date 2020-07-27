@@ -1,21 +1,19 @@
 import cv2
-import json
+import requests as rq
 from datetime import datetime
 
-face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
-eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
+URL = 'http://127.0.0.1:8000/events/camera/'
+face_cascade = cv2.CascadeClassifier(
+    'face-detector/haarcascade_frontalface_default.xml')
+eye_cascade = cv2.CascadeClassifier('face-detector/haarcascade_eye.xml')
 
 cap = cv2.VideoCapture(0)
 if not cap.isOpened():
     raise RuntimeError("Cannot open camera")
 
-events = []
 
-
-def write_to_file():
-    with open('results/face_detection_results.json', 'w') as file:
-        json_str = json.dumps(events, indent=4)
-        file.write(json_str)
+def post_event(event):
+    rq.post(URL, data=event)
 
 
 wasFaceLastIteration = False
@@ -34,13 +32,19 @@ while True:
 
     if len(faces) != 0:
         if not wasFaceLastIteration:
-            events.append((datetime.now().isoformat(), 'I see you'))
-            write_to_file()
+            event = {
+                'timestamp': datetime.now().isoformat(),
+                'status': 'I see you',
+            }
+            post_event(event)
             wasFaceLastIteration = True
     else:
         if wasFaceLastIteration:
-            events.append((datetime.now().isoformat(), 'I don\'t see you'))
-            write_to_file()
+            event = {
+                'timestamp': datetime.now().isoformat(),
+                'status': 'I don\'t see you',
+            }
+            post_event(event)
             wasFaceLastIteration = False
 
     for (x, y, w, h) in faces:
