@@ -18,6 +18,8 @@
 import glob
 import os
 import sys
+import requests
+from datetime import datetime
 
 
 try:
@@ -58,12 +60,14 @@ except ImportError:
 
 
 class App():
+    BASE_URL = 'http://127.0.0.1:8000'
 
     def __init__(self, args):
         pygame.init()
         pygame.font.init()
 
         self.world = None
+        self.EXPERIMENT_TARGET_ID = None
 
         try:
             self._init_client(args)
@@ -80,6 +84,10 @@ class App():
     def _init_client(self, args):
         self.client = carla.Client(args.host, args.port)
         self.client.set_timeout(2.0)
+
+        experiment = requests.post(f'{self.BASE_URL}/experiments/',
+                                   data={'started_at': datetime.now().isoformat()})
+        self.EXPERIMENT_TARGET_ID = experiment.json()['id']
 
     def _init_display(self, args):
         self.resolution = args.resolution
@@ -128,6 +136,8 @@ class App():
         if self.world is not None:
             self.world.destroy()
 
+        requests.patch(
+            f'{self.BASE_URL}/experiments/{self.EXPERIMENT_TARGET_ID}/end/')
         pygame.quit()
 
 

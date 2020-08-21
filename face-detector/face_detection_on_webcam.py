@@ -2,7 +2,9 @@ import cv2
 import requests as rq
 from datetime import datetime
 
-URL = 'http://127.0.0.1:8000/events/camera/'
+BASE_URL = 'http://127.0.0.1:8000'
+EXPERIMENT_ID = rq.get(f'{BASE_URL}/experiments/last').json()['id']
+
 face_cascade = cv2.CascadeClassifier(
     'face-detector/haarcascade_frontalface_default.xml')
 eye_cascade = cv2.CascadeClassifier('face-detector/haarcascade_eye.xml')
@@ -13,9 +15,18 @@ if not cap.isOpened():
 
 
 def post_event(event):
-    rq.post(URL, data=event)
+    event.update({
+        'name': 'CAMERA',
+        'experiment': EXPERIMENT_ID,
+    })
+    rq.post(f'{BASE_URL}/events/', data=event)
 
 
+event = {
+    'timestamp': datetime.now().isoformat(),
+    'status': 'I see you',
+}
+post_event(event)
 wasFaceLastIteration = False
 
 while True:

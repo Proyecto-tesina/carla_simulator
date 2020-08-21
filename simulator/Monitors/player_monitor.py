@@ -4,11 +4,14 @@ from datetime import datetime
 
 
 class Player_Monitor:
+    BASE_URL = 'http://127.0.0.1:8000'
+
     def __init__(self):
-        self.URL = 'http://127.0.0.1:8000/events/player/'
         self.velocity = 0
         self.steer = 0
         self.events = []
+        self.EXPERIMENT_TARGET_ID = rq.get(
+            f'{self.BASE_URL}/experiments/last').json()['id']
 
     def tick(self, world, clock):
         player = world.player
@@ -50,8 +53,10 @@ class Player_Monitor:
     def post_events(self):
         for event in self.events:
             body = {
+                'name': 'PLAYER',
                 'timestamp': event[0],
                 'status': event[1],
+                'experiment': self.EXPERIMENT_TARGET_ID,
             }
-            rq.post(self.URL, data=body)
+            rq.post(f'{self.BASE_URL}/events/', data=body)
         self.events.clear()
