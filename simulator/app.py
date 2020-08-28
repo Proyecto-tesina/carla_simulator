@@ -45,7 +45,7 @@ from Controller.keyboard_control import KeyboardControl
 from Display.resolution import CustomResolution, MultimonitorResolution
 from Hud.hud import Hud
 from World.world import World
-from Monitors.player_monitor import Player_Monitor
+from Monitors.player_monitor import PlayerMonitor
 from Signals.Drt.light import AlertLight
 
 import carla
@@ -107,7 +107,7 @@ class App():
         self.world = World(self.client.get_world(), self.hud, args)
 
     def _init_components(self):
-        player_monitor = Player_Monitor()
+        player_monitor = PlayerMonitor()
         alert_light = AlertLight(*self.resolution.size())
 
         self.world.add_tick_subscriber(player_monitor)

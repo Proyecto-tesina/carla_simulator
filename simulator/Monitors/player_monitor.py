@@ -3,7 +3,7 @@ import math
 from datetime import datetime
 
 
-class Player_Monitor:
+class PlayerMonitor:
     BASE_URL = 'http://127.0.0.1:8000'
 
     def __init__(self):
