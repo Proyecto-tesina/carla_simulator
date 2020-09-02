@@ -2,7 +2,7 @@
 
 Este simulador, tomando como base el proyecto [CARLA](http://carla.org/), busca dar una herramienta a los desarrolladores de aplicaciones para automóviles que les permita probar, en un ambiente controlado, el nivel de carga cognitiva de los conductores mientras utilizan sus aplicaciones.
 
-Las tareas de detección-respuesta (DRT) son un método para evaluar los efectos atencionales de la carga cognitiva en un entorno de conducción. Dependiendo de la eficiencia conseguida al realizar estas tareas y la calidad de manejo que posee el conductor mientras las realiza nos permite sacar conclusiones sobre el trabajo mental que le lleva realizar las dos cosas a la vez.
+Las tareas de detección-respuesta (DRT) son un método para evaluar los efectos atencionales de la carga cognitiva en un entorno de conducción. Dependiendo de la eficiencia conseguida al realizar estas tareas, junto con la calidad de manejo que posee el conductor mientras las realiza, podemos sacar conclusiones sobre el trabajo mental que le lleva realizar las dos cosas a la vez.
 
 Para fines prácticos podemos pensar que la tarea que debe realizar el conductor en este caso es utilizar una aplicación del celular o del panel frontal de un auto. A medida que el conductor maneja es necesario saber si nuestra app distrae mucho al conductor y que partes de nuestra app los distraen más.
 
@@ -32,7 +32,18 @@ Luego iniciar la simulación junto con el detector de rostros
   python3 face_detection_on_webcam.py
 ```
 
-<br>
+## Parámetros
+Existen algunos parámetros que nos permiten configurar como se ejecuta la simulación:
+```sh
+-a --autopilot        # Activa el piloto automático
+-w --wheel            # Configura la simulación para recibir eventos del volante
+-p --port "2000"      # Puerto TCP en el que escucha
+--host "127.0.0.1"    # IP del host con el servidor de CARLA
+--rolename "name"     # Permite modificar el nombre del actor bajo control. Por defecto es: hero
+--res "1280x720"      # Configura la resolución de la simulación
+--multimonitor        # Configuración en pantalla completa, ocupa todos los monitores disponibles
+```
+
 <br>
 
 # Organización del Proyecto
@@ -53,7 +64,7 @@ AlertLight provee elementos para ejercitar las tareas de detección-respuesta (D
 
 ![AlertLight mostrando una luz verde al jugador](assets/drt_light.png)
 
-Se pueden configurar las luces para que aparezcan de diferente tamaño, con distinta frequencia e incluso en que ubicaciones de la pantalla pueden aparecer.
+Se pueden configurar las luces para que aparezcan de diferente tamaño, con distinta frequencia e incluso se pueden seleccionar ubicaciones especificas de la pantalla donde puede aparecer.
 
 ## Hooks
 
