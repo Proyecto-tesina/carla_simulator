@@ -59,7 +59,7 @@ class On(DRTState):
 
     def turn_off_by_timer(self):
         self._turn_off()
-        # self.monitor.add_light_lost_timestamp()
+        self.monitor.add_light_lost_timestamp()
         logging.info('Turned light off by TIMER')
 
     def render(self, display):
