@@ -1,5 +1,6 @@
 import cv2
 import requests as rq
+import threading
 from datetime import datetime
 
 BASE_URL = 'http://127.0.0.1:8000'
@@ -14,6 +15,10 @@ if not cap.isOpened():
     raise RuntimeError("Cannot open camera")
 
 
+def call_post_thread(status):
+    threading.Thread(target=post_event, args=(status,)).start()
+
+
 def post_event(event):
     event.update({
         'name': 'CAMERA',
@@ -26,7 +31,7 @@ event = {
     'timestamp': datetime.now().isoformat(),
     'status': 'I see you',
 }
-post_event(event)
+call_post_thread(event)
 wasFaceLastIteration = False
 
 while True:
@@ -47,7 +52,7 @@ while True:
                 'timestamp': datetime.now().isoformat(),
                 'status': 'I see you',
             }
-            post_event(event)
+            call_post_thread(event)
             wasFaceLastIteration = True
     else:
         if wasFaceLastIteration:
@@ -55,7 +60,7 @@ while True:
                 'timestamp': datetime.now().isoformat(),
                 'status': 'I don\'t see you',
             }
-            post_event(event)
+            call_post_thread(event)
             wasFaceLastIteration = False
 
     for (x, y, w, h) in faces:

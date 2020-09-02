@@ -18,7 +18,7 @@
 import glob
 import os
 import sys
-import requests
+import requests as rq
 from datetime import datetime
 
 
@@ -85,8 +85,8 @@ class App():
         self.client = carla.Client(args.host, args.port)
         self.client.set_timeout(2.0)
 
-        experiment = requests.post(f'{self.BASE_URL}/experiments/',
-                                   data={'started_at': datetime.now().isoformat()})
+        experiment = rq.post(f'{self.BASE_URL}/experiments/',
+                             data={'started_at': datetime.now().isoformat()})
         self.EXPERIMENT_TARGET_ID = experiment.json()['id']
 
     def _init_display(self, args):
@@ -136,7 +136,7 @@ class App():
         if self.world is not None:
             self.world.destroy()
 
-        requests.patch(
+        rq.patch(
             f'{self.BASE_URL}/experiments/{self.EXPERIMENT_TARGET_ID}/end/')
         pygame.quit()
 

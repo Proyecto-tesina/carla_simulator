@@ -1,3 +1,4 @@
+import threading
 import requests as rq
 from datetime import datetime
 
@@ -10,18 +11,21 @@ class Monitor:
             f'{self.BASE_URL}/experiments/last').json()['id']
 
     def add_turn_on_timestamp(self):
-        self.post_event('start')
+        self._call_post_thread('start')
 
     def add_mistake_timestamp(self):
-        self.post_event('mistake')
+        self._call_post_thread('mistake')
 
     def add_light_lost_timestamp(self):
-        self.post_event('lost')
+        self._call_post_thread('lost')
 
     def add_turn_off_timestamp(self):
-        self.post_event('end')
+        self._call_post_thread('end')
 
-    def post_event(self, status):
+    def _call_post_thread(self, status):
+        threading.Thread(target=self._post_event, args=(status,)).start()
+
+    def _post_event(self, status):
         body = {
             'name': 'DRT',
             'timestamp': datetime.now().isoformat(),
