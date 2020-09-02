@@ -4,7 +4,13 @@ import threading
 from datetime import datetime
 
 BASE_URL = 'http://127.0.0.1:8000'
-EXPERIMENT_ID = rq.get(f'{BASE_URL}/experiments/last').json()['id']
+try:
+    EXPERIMENT_ID = rq.get(f'{BASE_URL}/experiments/last').json()['id']
+except rq.exceptions.ConnectionError:
+    HAS_CONNECTION = False
+else:
+    HAS_CONNECTION = True
+
 
 face_cascade = cv2.CascadeClassifier(
     'face-detector/haarcascade_frontalface_default.xml')
@@ -16,7 +22,8 @@ if not cap.isOpened():
 
 
 def call_post_thread(status):
-    threading.Thread(target=post_event, args=(status,)).start()
+    if HAS_CONNECTION:
+        threading.Thread(target=post_event, args=(status,)).start()
 
 
 def post_event(event):

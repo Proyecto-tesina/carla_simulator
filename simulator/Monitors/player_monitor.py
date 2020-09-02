@@ -10,8 +10,13 @@ class PlayerMonitor:
     def __init__(self):
         self.velocity = 0
         self.steer = 0
-        self.EXPERIMENT_TARGET_ID = rq.get(
-            f'{self.BASE_URL}/experiments/last').json()['id']
+        try:
+            self.EXPERIMENT_TARGET_ID = rq.get(
+                f'{self.BASE_URL}/experiments/last').json()['id']
+        except rq.exceptions.ConnectionError:
+            self.HAS_CONNECTION = False
+        else:
+            self.HAS_CONNECTION = True
 
     def tick(self, world, clock):
         player = world.player
@@ -42,7 +47,8 @@ class PlayerMonitor:
             self.velocity = velocity_in_km
 
     def _call_post_thread(self, status):
-        threading.Thread(target=self._post_event, args=(status, )).start()
+        if self.HAS_CONNECTION:
+            threading.Thread(target=self._post_event, args=(status, )).start()
 
     def _post_event(self, status):
         body = {

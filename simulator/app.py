@@ -68,6 +68,7 @@ class App():
 
         self.world = None
         self.EXPERIMENT_TARGET_ID = None
+        self.HAS_CONNECTION = False
 
         try:
             self._init_client(args)
@@ -84,10 +85,14 @@ class App():
     def _init_client(self, args):
         self.client = carla.Client(args.host, args.port)
         self.client.set_timeout(2.0)
-
-        experiment = rq.post(f'{self.BASE_URL}/experiments/',
-                             data={'started_at': datetime.now().isoformat()})
-        self.EXPERIMENT_TARGET_ID = experiment.json()['id']
+        try:
+            experiment = rq.post(f'{self.BASE_URL}/experiments/',
+                                 data={'started_at': datetime.now().isoformat()})
+            self.EXPERIMENT_TARGET_ID = experiment.json()['id']
+        except rq.exceptions.ConnectionError:
+            self.HAS_CONNECTION = False
+        else:
+            self.HAS_CONNECTION = True
 
     def _init_display(self, args):
         self.resolution = args.resolution
@@ -136,8 +141,9 @@ class App():
         if self.world is not None:
             self.world.destroy()
 
-        rq.patch(
-            f'{self.BASE_URL}/experiments/{self.EXPERIMENT_TARGET_ID}/end/')
+        if self.HAS_CONNECTION:
+            rq.patch(
+                f'{self.BASE_URL}/experiments/{self.EXPERIMENT_TARGET_ID}/end/')
         pygame.quit()
 
 
