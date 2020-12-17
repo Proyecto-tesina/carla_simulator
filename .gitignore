@@ -1,11 +1,9 @@
+.vim/
+.vscode/
 *.pyc
 *.swp
 *.log
-*.json
-!*_config.json
 Carla/**
-apps_gui/images/**
-gui_simulator/**
 __pycache__/
 env/
 venv/

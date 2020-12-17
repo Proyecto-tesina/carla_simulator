@@ -2,7 +2,7 @@ import json
 
 
 class ConfigParser():
-    PATH = 'simulator/drt_config.json'
+    PATH = 'drt_config.json'
 
     def __init__(self):
         try:

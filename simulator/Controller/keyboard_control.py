@@ -56,7 +56,9 @@ class KeyboardControl(object):
             if event.type == pygame.QUIT:
                 return True
             if event.type == pygame.KEYUP:
-                if (event.key == K_ESCAPE) or (event.key == K_q and pygame.key.get_mods() & KMOD_CTRL):
+                escape = event.key == K_ESCAPE
+                ctrl_q = event.key == K_q and pygame.key.get_mods() & KMOD_CTRL
+                if escape or ctrl_q:
                     return True
             self.check_controller_keys(event, client, world)
 

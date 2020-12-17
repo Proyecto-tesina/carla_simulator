@@ -10,31 +10,27 @@
 # documented example, please take a look at tutorial.py.
 
 
-# ==============================================================================
-# -- find carla module ---------------------------------------------------------
-# ==============================================================================
+# =============================================================================
+# -- find carla module --------------------------------------------------------
+# =============================================================================
 
 
-import glob
-import os
 import sys
 import requests as rq
 from datetime import datetime
 
 
 try:
-    sys.path.append(glob.glob('./Carla/PythonAPI/carla/dist/carla-*%d.%d-%s.egg' % (
-        sys.version_info.major,
-        sys.version_info.minor,
-        'win-amd64' if os.name == 'nt' else 'linux-x86_64'))[0])
+    sys.path.append('carla_client/carla-linux-x86_64.egg')
 except IndexError:
     raise ImportError(
-        'cannot import carla module, make sure the path to ".egg" file is correct')
+        'cannot import carla module, make sure the path to ".egg" \
+        file is correct')
 
 
-# ==============================================================================
-# -- imports -------------------------------------------------------------------
-# ==============================================================================
+# =============================================================================
+# -- imports ------------------------------------------------------------------
+# =============================================================================
 
 
 import argparse
@@ -87,7 +83,9 @@ class App():
         self.client.set_timeout(2.0)
         try:
             experiment = rq.post(f'{self.BASE_URL}/experiments/',
-                                 data={'started_at': datetime.now().isoformat()})
+                                 data={
+                                     'started_at': datetime.now().isoformat()
+                                 })
             self.EXPERIMENT_TARGET_ID = experiment.json()['id']
         except rq.exceptions.ConnectionError:
             self.HAS_CONNECTION = False
@@ -147,9 +145,9 @@ class App():
         pygame.quit()
 
 
-# ==============================================================================
-# -- main() --------------------------------------------------------------------
-# ==============================================================================
+# =============================================================================
+# -- main() -------------------------------------------------------------------
+# =============================================================================
 
 
 def main():
