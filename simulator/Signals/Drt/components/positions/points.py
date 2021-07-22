@@ -1,7 +1,7 @@
 import random
 
 
-class Point():
+class Point:
 
     MARGIN = 10
 
@@ -16,7 +16,7 @@ class Point():
         if size <= max_radius:
             self.size = size
         else:
-            error_msg = f'Size of DRT light should be less to {max_radius}px.'
+            error_msg = f"Size of DRT light should be less to {max_radius}px."
             raise Exception(error_msg)
 
     def calculate_position(self, value):
@@ -42,14 +42,12 @@ class Point():
 
 
 class RandomPoint(Point):
-
     def coord(self):
         random_value = random.randint(self.min_value, self.max_value)
         return self.calculate_position(random_value)
 
 
 class ManualPoint(Point):
-
     def __init__(self, min_value, max_value, coord, size):
         super(ManualPoint, self).__init__(min_value, max_value, size)
         self._coord = coord

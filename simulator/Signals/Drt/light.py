@@ -6,7 +6,6 @@ from .monitor import Monitor
 
 
 class AlertLight(object):
-
     def __init__(self, width, height):
         self.config = ConfigParser()
 
@@ -35,12 +34,7 @@ class AlertLight(object):
     # Renders
 
     def show_light(self, display):
-        pygame.draw.circle(
-            display,
-            self.color,
-            self.position.resolution,
-            self.size
-        )
+        pygame.draw.circle(display, self.color, self.position.resolution, self.size)
 
     def render(self, display):
         self.state.render(display)

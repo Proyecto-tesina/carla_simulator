@@ -1,48 +1,48 @@
 {
-    "config": {
-        "size": 20,
-        "color": "#14ff53",
-        "light_on_duration": 2,
-        "mode_id": 1,
-        "position": 1
+  "config": {
+    "size": 20,
+    "color": "#14ff53",
+    "light_on_duration": 2,
+    "mode_id": 1,
+    "position": 1
+  },
+  "modes": [
+    {
+      "id": 1,
+      "name": "random",
+      "light_off_interval": {
+        "start": 1,
+        "end": 3
+      }
     },
-    "modes": [
-        {
-            "id": 1,
-            "name": "random",
-            "light_off_interval": {
-                "start": 1,
-                "end": 3
-            }
-        },
-        {
-            "id": 2,
-            "name": "manual"
-        }
-    ],
-    "positions": [
-        {
-            "id": 1,
-            "name": "random",
-            "quadrants": {
-                "1": false,
-                "2": false,
-                "3": false,
-                "4": false,
-                "5": true,
-                "6": false,
-                "7": false,
-                "8": false,
-                "9": false
-            }
-        },
-        {
-            "id": 2,
-            "name": "fixed",
-            "coords": {
-                "x": 0,
-                "y": 0
-            }
-        }
-    ]
+    {
+      "id": 2,
+      "name": "manual"
+    }
+  ],
+  "positions": [
+    {
+      "id": 1,
+      "name": "random",
+      "quadrants": {
+        "1": false,
+        "2": false,
+        "3": false,
+        "4": false,
+        "5": true,
+        "6": false,
+        "7": false,
+        "8": false,
+        "9": false
+      }
+    },
+    {
+      "id": 2,
+      "name": "fixed",
+      "coords": {
+        "x": 0,
+        "y": 0
+      }
+    }
+  ]
 }

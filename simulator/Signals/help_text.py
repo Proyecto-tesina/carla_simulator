@@ -3,11 +3,10 @@ import pygame
 
 class HelpText(object):
     def __init__(self, font, width, height):
-        lines = self._get_help_file().split('\n')
+        lines = self._get_help_file().split("\n")
         self.font = font
         self.dim = (1200, len(lines) * 22 + 12)
-        self.pos = (0.5 * width - 0.5 *
-                    self.dim[0], 0.5 * height - 0.5 * self.dim[1])
+        self.pos = (0.5 * width - 0.5 * self.dim[0], 0.5 * height - 0.5 * self.dim[1])
         self.seconds_left = 0
         self.surface = pygame.Surface(self.dim)
         self.surface.fill((0, 0, 0, 0))
@@ -19,10 +18,10 @@ class HelpText(object):
 
     def _get_help_file(self):
         try:
-            with open('./simulator/instructions.txt', 'r') as file:
+            with open("./simulator/instructions.txt", "r") as file:
                 return file.read()
         except FileNotFoundError:
-            return 'There was an error when looking for the instructions file'
+            return "There was an error when looking for the instructions file"
 
     def toggle(self):
         self._render = not self._render

@@ -6,7 +6,6 @@ import pygame
 
 
 class Resolution(ABC):
-
     @abstractmethod
     def width(self):
         pass
@@ -23,7 +22,7 @@ class Resolution(ABC):
         return self.width(), self.height()
 
     def __str__(self):
-        return f'{self.width()}x{self.height()}'
+        return f"{self.width()}x{self.height()}"
 
 
 class CustomResolution(Resolution):

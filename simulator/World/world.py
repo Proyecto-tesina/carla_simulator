@@ -33,21 +33,26 @@ class World(object):
     def restart(self):
         # Keep same camera config if the camera manager exists.
         cam_index = self.camera_manager.index if self.camera_manager is not None else 0
-        cam_pos_index = self.camera_manager.transform_index if self.camera_manager is not None else 0
+        cam_pos_index = (
+            self.camera_manager.transform_index
+            if self.camera_manager is not None
+            else 0
+        )
         # Get a random blueprint.
         blueprint = random.choice(
-            self.world.get_blueprint_library().filter(self._actor_filter))
-        blueprint.set_attribute('role_name', self.actor_role_name)
-        if blueprint.has_attribute('color'):
-            color = random.choice(
-                blueprint.get_attribute('color').recommended_values)
-            blueprint.set_attribute('color', color)
-        if blueprint.has_attribute('driver_id'):
+            self.world.get_blueprint_library().filter(self._actor_filter)
+        )
+        blueprint.set_attribute("role_name", self.actor_role_name)
+        if blueprint.has_attribute("color"):
+            color = random.choice(blueprint.get_attribute("color").recommended_values)
+            blueprint.set_attribute("color", color)
+        if blueprint.has_attribute("driver_id"):
             driver_id = random.choice(
-                blueprint.get_attribute('driver_id').recommended_values)
-            blueprint.set_attribute('driver_id', driver_id)
-        if blueprint.has_attribute('is_invincible'):
-            blueprint.set_attribute('is_invincible', 'true')
+                blueprint.get_attribute("driver_id").recommended_values
+            )
+            blueprint.set_attribute("driver_id", driver_id)
+        if blueprint.has_attribute("is_invincible"):
+            blueprint.set_attribute("is_invincible", "true")
         # Spawn the player.
         if self.player is not None:
             spawn_point = self.player.get_transform()
@@ -58,8 +63,9 @@ class World(object):
             self.player = self.world.try_spawn_actor(blueprint, spawn_point)
         while self.player is None:
             spawn_points = self.map.get_spawn_points()
-            spawn_point = random.choice(
-                spawn_points) if spawn_points else carla.Transform()
+            spawn_point = (
+                random.choice(spawn_points) if spawn_points else carla.Transform()
+            )
             self.player = self.world.try_spawn_actor(blueprint, spawn_point)
         # Set up the sensors.
         self.collision_sensor = CollisionSensor(self.player, self.hud)
@@ -75,7 +81,7 @@ class World(object):
         self._weather_index += -1 if reverse else 1
         self._weather_index %= len(self._weather_presets)
         preset = self._weather_presets[self._weather_index]
-        self.hud.notification('Weather: %s' % preset[1])
+        self.hud.notification("Weather: %s" % preset[1])
         self.player.get_world().set_weather(preset[0])
 
     def tick(self, clock):
@@ -98,7 +104,8 @@ class World(object):
             self.collision_sensor.sensor,
             self.lane_invasion_sensor.sensor,
             self.gnss_sensor.sensor,
-            self.player]
+            self.player,
+        ]
         for actor in actors:
             if actor is not None:
                 actor.destroy()

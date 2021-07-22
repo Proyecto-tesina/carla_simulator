@@ -1,12 +1,12 @@
-import carla
 import weakref
 import pygame
+import carla
 from carla import ColorConverter as cc
+
 try:
     import numpy as np
 except ImportError:
-    raise RuntimeError(
-        'cannot import numpy, make sure numpy package is installed')
+    raise RuntimeError("cannot import numpy, make sure numpy package is installed")
 
 
 class CameraManager(object):
@@ -19,51 +19,77 @@ class CameraManager(object):
         bound_y = 0.5 + self._parent.bounding_box.extent.y
         Attachment = carla.AttachmentType
         self._camera_transforms = [
-            # (carla.Transform(carla.Location(x=-5.5, z=2.5), carla.Rotation(pitch=8.0)), Attachment.SpringArm),
-            # Camera for high resolution (4025x740)
-            (carla.Transform(carla.Location(x=-16.0, z=2.5),
-                             carla.Rotation(pitch=8.0)), Attachment.SpringArm),
+            (
+                carla.Transform(
+                    carla.Location(x=-16.0, z=2.5), carla.Rotation(pitch=8.0)
+                ),
+                Attachment.SpringArm,
+            ),
             (carla.Transform(carla.Location(x=1.6, z=1.7)), Attachment.Rigid),
-            (carla.Transform(carla.Location(x=5.5, y=1.5, z=1.5)), Attachment.SpringArm),
-            (carla.Transform(carla.Location(x=-8.0, z=6.0),
-                             carla.Rotation(pitch=6.0)), Attachment.SpringArm),
-            (carla.Transform(carla.Location(x=-1, y=-bound_y, z=0.5)), Attachment.Rigid)]
+            (
+                carla.Transform(carla.Location(x=5.5, y=1.5, z=1.5)),
+                Attachment.SpringArm,
+            ),
+            (
+                carla.Transform(
+                    carla.Location(x=-8.0, z=6.0), carla.Rotation(pitch=6.0)
+                ),
+                Attachment.SpringArm,
+            ),
+            (
+                carla.Transform(carla.Location(x=-1, y=-bound_y, z=0.5)),
+                Attachment.Rigid,
+            ),
+        ]
         self.transform_index = 1
         self.sensors = [
-            ['sensor.camera.rgb', cc.Raw, 'Camera RGB'],
-            ['sensor.camera.depth', cc.Raw, 'Camera Depth (Raw)'],
-            ['sensor.camera.depth', cc.Depth, 'Camera Depth (Gray Scale)'],
-            ['sensor.camera.depth', cc.LogarithmicDepth,
-                'Camera Depth (Logarithmic Gray Scale)'],
-            ['sensor.camera.semantic_segmentation', cc.Raw,
-                'Camera Semantic Segmentation (Raw)'],
-            ['sensor.camera.semantic_segmentation', cc.CityScapesPalette,
-                'Camera Semantic Segmentation (CityScapes Palette)'],
-            ['sensor.lidar.ray_cast', None, 'Lidar (Ray-Cast)']]
+            ["sensor.camera.rgb", cc.Raw, "Camera RGB"],
+            ["sensor.camera.depth", cc.Raw, "Camera Depth (Raw)"],
+            ["sensor.camera.depth", cc.Depth, "Camera Depth (Gray Scale)"],
+            [
+                "sensor.camera.depth",
+                cc.LogarithmicDepth,
+                "Camera Depth (Logarithmic Gray Scale)",
+            ],
+            [
+                "sensor.camera.semantic_segmentation",
+                cc.Raw,
+                "Camera Semantic Segmentation (Raw)",
+            ],
+            [
+                "sensor.camera.semantic_segmentation",
+                cc.CityScapesPalette,
+                "Camera Semantic Segmentation (CityScapes Palette)",
+            ],
+            ["sensor.lidar.ray_cast", None, "Lidar (Ray-Cast)"],
+        ]
         world = self._parent.get_world()
         bp_library = world.get_blueprint_library()
         for item in self.sensors:
             bp = bp_library.find(item[0])
-            if item[0].startswith('sensor.camera'):
-                bp.set_attribute('image_size_x', str(hud.dim[0]))
-                bp.set_attribute('image_size_y', str(hud.dim[1]))
-                if bp.has_attribute('gamma'):
-                    bp.set_attribute('gamma', str(gamma_correction))
-            elif item[0].startswith('sensor.lidar'):
-                bp.set_attribute('range', '5000')
+            if item[0].startswith("sensor.camera"):
+                bp.set_attribute("image_size_x", str(hud.dim[0]))
+                bp.set_attribute("image_size_y", str(hud.dim[1]))
+                if bp.has_attribute("gamma"):
+                    bp.set_attribute("gamma", str(gamma_correction))
+            elif item[0].startswith("sensor.lidar"):
+                bp.set_attribute("range", "5000")
             item.append(bp)
         self.index = None
 
     def toggle_camera(self):
-        self.transform_index = (self.transform_index +
-                                1) % len(self._camera_transforms)
+        self.transform_index = (self.transform_index + 1) % len(self._camera_transforms)
         self.set_sensor(self.index, notify=False, force_respawn=True)
 
     def set_sensor(self, index, notify=True, force_respawn=False):
         index = index % len(self.sensors)
-        needs_respawn = True if self.index is None else \
-            (force_respawn or (self.sensors[index]
-                               [0] != self.sensors[self.index][0]))
+        needs_respawn = (
+            True
+            if self.index is None
+            else (
+                force_respawn or (self.sensors[index][0] != self.sensors[self.index][0])
+            )
+        )
         if needs_respawn:
             if self.sensor is not None:
                 self.sensor.destroy()
@@ -72,12 +98,14 @@ class CameraManager(object):
                 self.sensors[index][-1],
                 self._camera_transforms[self.transform_index][0],
                 attach_to=self._parent,
-                attachment_type=self._camera_transforms[self.transform_index][1])
+                attachment_type=self._camera_transforms[self.transform_index][1],
+            )
             # We need to pass the lambda a weak reference to self to avoid
             # circular reference.
             weak_self = weakref.ref(self)
             self.sensor.listen(
-                lambda image: CameraManager._parse_image(weak_self, image))
+                lambda image: CameraManager._parse_image(weak_self, image)
+            )
         if notify:
             self.hud.notification(self.sensors[index][2])
         self.index = index
@@ -87,8 +115,7 @@ class CameraManager(object):
 
     def toggle_recording(self):
         self.recording = not self.recording
-        self.hud.notification('Recording %s' %
-                              ('On' if self.recording else 'Off'))
+        self.hud.notification("Recording %s" % ("On" if self.recording else "Off"))
 
     def render(self, display):
         if self.surface is not None:
@@ -99,13 +126,13 @@ class CameraManager(object):
         self = weak_self()
         if not self:
             return
-        if self.sensors[self.index][0].startswith('sensor.lidar'):
-            points = np.frombuffer(image.raw_data, dtype=np.dtype('f4'))
+        if self.sensors[self.index][0].startswith("sensor.lidar"):
+            points = np.frombuffer(image.raw_data, dtype=np.dtype("f4"))
             points = np.reshape(points, (int(points.shape[0] / 3), 3))
             lidar_data = np.array(points[:, :2])
             lidar_data *= min(self.hud.dim) / 100.0
             lidar_data += (0.5 * self.hud.dim[0], 0.5 * self.hud.dim[1])
-            lidar_data = np.fabs(lidar_data)  # pylint: disable=E1111
+            lidar_data = np.fabs(lidar_data)
             lidar_data = lidar_data.astype(np.int32)
             lidar_data = np.reshape(lidar_data, (-1, 2))
             lidar_img_size = (self.hud.dim[0], self.hud.dim[1], 3)
@@ -120,4 +147,4 @@ class CameraManager(object):
             array = array[:, :, ::-1]
             self.surface = pygame.surfarray.make_surface(array.swapaxes(0, 1))
         if self.recording:
-            image.save_to_disk('_out/%08d' % image.frame)
+            image.save_to_disk("_out/%08d" % image.frame)

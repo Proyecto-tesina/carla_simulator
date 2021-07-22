@@ -8,11 +8,7 @@ if sys.version_info >= (3, 0):
 else:
     from ConfigParser import RawConfigParser as ConfigParser
 
-try:
-    import pygame
-except ImportError:
-    raise RuntimeError(
-        'cannot import pygame, make sure pygame package is installed')
+import pygame
 
 
 class WheelControl(KeyboardControl):
@@ -28,15 +24,12 @@ class WheelControl(KeyboardControl):
         self._joystick.init()
 
         self._parser = ConfigParser()
-        self._parser.read('./simulator/wheel_config.ini')
-        self._steer_idx = self._parser.getint(
-            'G29 Racing Wheel', 'steering_wheel')
-        self._brake_idx = self._parser.getint('G29 Racing Wheel', 'brake')
-        self._reverse_idx = self._parser.getint('G29 Racing Wheel', 'reverse')
-        self._throttle_idx = self._parser.getint(
-            'G29 Racing Wheel', 'throttle')
-        self._handbrake_idx = self._parser.getint(
-            'G29 Racing Wheel', 'handbrake')
+        self._parser.read("./simulator/wheel_config.ini")
+        self._steer_idx = self._parser.getint("G29 Racing Wheel", "steering_wheel")
+        self._brake_idx = self._parser.getint("G29 Racing Wheel", "brake")
+        self._reverse_idx = self._parser.getint("G29 Racing Wheel", "reverse")
+        self._throttle_idx = self._parser.getint("G29 Racing Wheel", "throttle")
+        self._handbrake_idx = self._parser.getint("G29 Racing Wheel", "handbrake")
 
         self.simple_joybuttons_events = {
             0: world.restart,
@@ -61,8 +54,10 @@ class WheelControl(KeyboardControl):
 
         numAxes = self._joystick.get_numaxes()
         jsInputs = [float(self._joystick.get_axis(i)) for i in range(numAxes)]
-        jsButtons = [float(self._joystick.get_button(i)) for i in
-                     range(self._joystick.get_numbuttons())]
+        jsButtons = [
+            float(self._joystick.get_button(i))
+            for i in range(self._joystick.get_numbuttons())
+        ]
 
         # Custom function to map range of inputs [1, -1] to outputs [0, 1]
         # i.e 1 from inputs means nothing is pressed
@@ -71,15 +66,20 @@ class WheelControl(KeyboardControl):
         steerCmd = K1 * math.tan(1.1 * jsInputs[self._steer_idx])
 
         K2 = 1.6  # 1.6
-        throttleCmd = K2 + (2.05 * math.log10(
-            -0.7 * jsInputs[self._throttle_idx] + 1.4) - 1.2) / 0.92
+        throttleCmd = (
+            K2
+            + (2.05 * math.log10(-0.7 * jsInputs[self._throttle_idx] + 1.4) - 1.2)
+            / 0.92
+        )
         if throttleCmd <= 0:
             throttleCmd = 0
         elif throttleCmd > 1:
             throttleCmd = 1
 
-        brakeCmd = 1.6 + (2.05 * math.log10(
-            -0.7 * jsInputs[self._brake_idx] + 1.4) - 1.2) / 0.92
+        brakeCmd = (
+            1.6
+            + (2.05 * math.log10(-0.7 * jsInputs[self._brake_idx] + 1.4) - 1.2) / 0.92
+        )
         if brakeCmd <= 0:
             brakeCmd = 0
         elif brakeCmd > 1:

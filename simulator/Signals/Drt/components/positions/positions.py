@@ -3,7 +3,7 @@ import random
 from .points import ManualPoint, RandomPoint
 
 
-class Quadrant():
+class Quadrant:
 
     ROWS = 3
     COLS = 3
@@ -38,7 +38,7 @@ class Quadrant():
         return self.start_y() + self.height
 
 
-class Position():
+class Position:
     def __init__(self, drt, width, height):
         self.drt = drt
         self.width, self.height = width, height
@@ -66,7 +66,6 @@ class FixedPosition(Position):
 
 
 class RandomPosition(Position):
-
     def __init__(self, drt, width, height):
         super(RandomPosition, self).__init__(drt, width, height)
         self.size = drt.size

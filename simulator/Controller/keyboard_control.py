@@ -1,37 +1,33 @@
 import carla
-try:
-    import pygame
-    from pygame.locals import KMOD_CTRL
-    from pygame.locals import KMOD_SHIFT
-    from pygame.locals import K_0
-    from pygame.locals import K_9
-    from pygame.locals import K_BACKQUOTE
-    from pygame.locals import K_BACKSPACE
-    from pygame.locals import K_COMMA
-    from pygame.locals import K_DOWN
-    from pygame.locals import K_ESCAPE
-    from pygame.locals import K_F1
-    from pygame.locals import K_LEFT
-    from pygame.locals import K_PERIOD
-    from pygame.locals import K_RIGHT
-    from pygame.locals import K_SPACE
-    from pygame.locals import K_TAB
-    from pygame.locals import K_UP
-    from pygame.locals import K_a
-    from pygame.locals import K_c
-    from pygame.locals import K_d
-    from pygame.locals import K_h
-    from pygame.locals import K_m
-    from pygame.locals import K_p
-    from pygame.locals import K_q
-    from pygame.locals import K_r
-    from pygame.locals import K_s
-    from pygame.locals import K_w
-    from pygame.locals import K_MINUS
-    from pygame.locals import K_EQUALS
-except ImportError:
-    raise RuntimeError(
-        'cannot import pygame, make sure pygame package is installed')
+import pygame
+from pygame.locals import KMOD_CTRL
+from pygame.locals import KMOD_SHIFT
+from pygame.locals import K_0
+from pygame.locals import K_9
+from pygame.locals import K_BACKQUOTE
+from pygame.locals import K_BACKSPACE
+from pygame.locals import K_COMMA
+from pygame.locals import K_DOWN
+from pygame.locals import K_ESCAPE
+from pygame.locals import K_F1
+from pygame.locals import K_LEFT
+from pygame.locals import K_PERIOD
+from pygame.locals import K_RIGHT
+from pygame.locals import K_SPACE
+from pygame.locals import K_TAB
+from pygame.locals import K_UP
+from pygame.locals import K_a
+from pygame.locals import K_c
+from pygame.locals import K_d
+from pygame.locals import K_h
+from pygame.locals import K_m
+from pygame.locals import K_p
+from pygame.locals import K_q
+from pygame.locals import K_r
+from pygame.locals import K_s
+from pygame.locals import K_w
+from pygame.locals import K_MINUS
+from pygame.locals import K_EQUALS
 
 
 class KeyboardControl(object):
@@ -86,14 +82,15 @@ class KeyboardControl(object):
         elif event.key == K_p and not (pygame.key.get_mods() & KMOD_CTRL):
             self._autopilot_enabled = not self._autopilot_enabled
             world.player.set_autopilot(self._autopilot_enabled)
-            world.hud.notification('Autopilot %s' % (
-                'On' if self._autopilot_enabled else 'Off'))
+            world.hud.notification(
+                "Autopilot %s" % ("On" if self._autopilot_enabled else "Off")
+            )
 
     def parse_recording_events(self, event, client, world):
         if event.key == K_r and not (pygame.key.get_mods() & KMOD_CTRL):
             world.camera_manager.toggle_recording()
         elif event.key == K_r and (pygame.key.get_mods() & KMOD_CTRL):
-            if (world.recording_enabled):
+            if world.recording_enabled:
                 client.stop_recorder()
                 world.recording_enabled = False
                 world.hud.notification("Recorder is OFF")
@@ -102,20 +99,18 @@ class KeyboardControl(object):
                 world.recording_enabled = True
                 world.hud.notification("Recorder is ON")
         elif event.key == K_p and (pygame.key.get_mods() & KMOD_CTRL):
-            # stop recorder
+            # Stop recorder
             client.stop_recorder()
             world.recording_enabled = False
-            # work around to fix camera at start of replaying
+            # Workaround to fix camera at start of replaying
             currentIndex = world.camera_manager.index
             world.destroy_sensors()
-            # disable autopilot
+            # Disable autopilot
             self._autopilot_enabled = False
             world.player.set_autopilot(self._autopilot_enabled)
-            world.hud.notification(
-                "Replaying file 'manual_recording.rec'")
-            # replayer
-            client.replay_file("manual_recording.rec",
-                               world.recording_start, 0, 0)
+            world.hud.notification("Replaying file 'manual_recording.rec'")
+            # Replay
+            client.replay_file("manual_recording.rec", world.recording_start, 0, 0)
             world.camera_manager.set_sensor(currentIndex)
         elif event.key == K_MINUS and (pygame.key.get_mods() & KMOD_CTRL):
             if pygame.key.get_mods() & KMOD_SHIFT:
@@ -123,14 +118,16 @@ class KeyboardControl(object):
             else:
                 world.recording_start -= 1
             world.hud.notification(
-                "Recording start time is %d" % (world.recording_start))
+                "Recording start time is %d" % (world.recording_start)
+            )
         elif event.key == K_EQUALS and (pygame.key.get_mods() & KMOD_CTRL):
             if pygame.key.get_mods() & KMOD_SHIFT:
                 world.recording_start += 10
             else:
                 world.recording_start += 1
             world.hud.notification(
-                "Recording start time is %d" % (world.recording_start))
+                "Recording start time is %d" % (world.recording_start)
+            )
 
     def parse_vehicle_events(self, event, world):
         if event.key == K_q:
@@ -142,8 +139,10 @@ class KeyboardControl(object):
         elif event.key == K_m:
             self._control.manual_gear_shift = not self._control.manual_gear_shift
             self._control.gear = world.player.get_control().gear
-            world.hud.notification('%s Transmission' % (
-                'Manual' if self._control.manual_gear_shift else 'Automatic'))
+            world.hud.notification(
+                "%s Transmission"
+                % ("Manual" if self._control.manual_gear_shift else "Automatic")
+            )
 
     def _parse_vehicle_keys(self, milliseconds):
         keys = pygame.key.get_pressed()

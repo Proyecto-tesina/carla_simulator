@@ -33,7 +33,7 @@ class Mode(ABC):
         if self.not_turned_on(timer):
             self.drt.state.turn_off_by_timer()
         else:
-            logging.info('Discard TIMER')
+            logging.info("Discard TIMER")
 
         self.state_lock.release()
 
@@ -60,7 +60,6 @@ class RandomMode(Mode):
 
 
 class ManualMode(Mode):
-
     def turn_on_by_user(self):
         self.drt.state.turn_on_by_user()
 
