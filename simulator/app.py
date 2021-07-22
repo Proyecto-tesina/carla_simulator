@@ -1,37 +1,16 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2019 Computer Vision Center (CVC) at the Universitat Autonoma de
-# Barcelona (UAB).
-#
-# This work is licensed under the terms of the MIT license.
-# For a copy, see <https://opensource.org/licenses/MIT>.
-
-# Allows controlling a vehicle with a keyboard. For a simpler and more
-# documented example, please take a look at tutorial.py.
-
-
-# =============================================================================
-# -- find carla module --------------------------------------------------------
-# =============================================================================
-
-
 import sys
 import requests as rq
 from datetime import datetime
 
-
 try:
-    sys.path.append('carla_client/carla-linux-x86_64.egg')
+    sys.path.append("../carla_API/carla-linux-x86_64.egg")
 except IndexError:
     raise ImportError(
         'cannot import carla module, make sure the path to ".egg" \
-        file is correct')
-
-
-# =============================================================================
-# -- imports ------------------------------------------------------------------
-# =============================================================================
-
+        file is correct'
+    )
 
 import argparse
 import logging
@@ -45,18 +24,13 @@ from Monitors.player_monitor import PlayerMonitor
 from Signals.Drt.light import AlertLight
 
 import carla
-
-try:
-    import pygame
-    from pygame.locals import K_b
-    from pygame.locals import K_n
-except ImportError:
-    raise RuntimeError(
-        'cannot import pygame, make sure pygame package is installed')
+import pygame
+from pygame.locals import K_b
+from pygame.locals import K_n
 
 
-class App():
-    BASE_URL = 'http://127.0.0.1:8000'
+class App:
+    BASE_URL = "http://127.0.0.1:8000"
 
     def __init__(self, args):
         pygame.init()
@@ -82,11 +56,11 @@ class App():
         self.client = carla.Client(args.host, args.port)
         self.client.set_timeout(2.0)
         try:
-            experiment = rq.post(f'{self.BASE_URL}/experiments/',
-                                 data={
-                                     'started_at': datetime.now().isoformat()
-                                 })
-            self.EXPERIMENT_TARGET_ID = experiment.json()['id']
+            experiment = rq.post(
+                f"{self.BASE_URL}/experiments/",
+                data={"started_at": datetime.now().isoformat()},
+            )
+            self.EXPERIMENT_TARGET_ID = experiment.json()["id"]
         except rq.exceptions.ConnectionError:
             self.HAS_CONNECTION = False
         else:
@@ -96,8 +70,7 @@ class App():
         self.resolution = args.resolution
 
         self.display = pygame.display.set_mode(
-            self.resolution.size(),
-            self.resolution.mode()
+            self.resolution.size(), self.resolution.mode()
         )
 
     def _init_hud(self, args):
@@ -133,97 +106,100 @@ class App():
             pygame.display.flip()
 
     def stop(self):
-        if (self.world and self.world.recording_enabled):
+        if self.world and self.world.recording_enabled:
             self.client.stop_recorder()
 
         if self.world is not None:
             self.world.destroy()
 
         if self.HAS_CONNECTION:
-            rq.patch(
-                f'{self.BASE_URL}/experiments/{self.EXPERIMENT_TARGET_ID}/end/')
+            rq.patch(f"{self.BASE_URL}/experiments/{self.EXPERIMENT_TARGET_ID}/end/")
         pygame.quit()
 
 
-# =============================================================================
-# -- main() -------------------------------------------------------------------
-# =============================================================================
-
-
 def main():
-    argparser = argparse.ArgumentParser(
-        description='CARLA Manual Control Client')
+    argparser = argparse.ArgumentParser(description="CARLA Manual Control Client")
     argparser.add_argument(
-        '-v', '--verbose',
-        action='store_true',
-        dest='info',
-        help='print experiment information')
+        "-v",
+        "--verbose",
+        action="store_true",
+        dest="info",
+        help="print experiment information",
+    )
     argparser.add_argument(
-        '--host',
-        metavar='H',
-        default='127.0.0.1',
-        help='IP of the host server (default: 127.0.0.1)')
+        "--host",
+        metavar="H",
+        default="127.0.0.1",
+        help="IP of the host server (default: 127.0.0.1)",
+    )
     argparser.add_argument(
-        '-p', '--port',
-        metavar='P',
+        "-p",
+        "--port",
+        metavar="P",
         default=2000,
         type=int,
-        help='TCP port to listen to (default: 2000)')
+        help="TCP port to listen to (default: 2000)",
+    )
     argparser.add_argument(
-        '-a', '--autopilot',
-        action='store_true',
-        help='enable autopilot')
+        "-a", "--autopilot", action="store_true", help="enable autopilot"
+    )
     argparser.add_argument(
-        '--rolename',
-        metavar='NAME',
-        default='hero',
-        help='actor role name (default: "hero")')
+        "--rolename",
+        metavar="NAME",
+        default="hero",
+        help='actor role name (default: "hero")',
+    )
     argparser.add_argument(
-        '--gamma',
+        "--gamma",
         default=2.2,
         type=float,
-        help='Gamma correction of the camera (default: 2.2)')
+        help="Gamma correction of the camera (default: 2.2)",
+    )
     argparser.add_argument(
-        '-w', '--wheel',
-        action='store_true',
-        help='Enable manual control steering wheel')
+        "-w",
+        "--wheel",
+        action="store_true",
+        help="Enable manual control steering wheel",
+    )
     argparser.add_argument(
-        '--res',
-        metavar='WIDTHxHEIGHT',
-        default='1280x720',
-        help='window resolution (default: 1280x720)')
+        "--res",
+        metavar="WIDTHxHEIGHT",
+        default="1280x720",
+        help="window resolution (default: 1280x720)",
+    )
     argparser.add_argument(
-        '--multimonitor',
-        action='store_true',
-        help='Multimonitor window resolution, extends display in all monitors')
+        "--multimonitor",
+        action="store_true",
+        help="Multimonitor window resolution, extends display in all monitors",
+    )
 
     args = argparser.parse_args()
 
     if args.multimonitor:
         args.resolution = MultimonitorResolution()
     else:
-        width, height = [int(x) for x in args.res.split('x')]
+        width, height = [int(x) for x in args.res.split("x")]
         args.resolution = CustomResolution(width, height)
 
     args.controller = WheelControl if args.wheel else KeyboardControl
 
     log_level = logging.INFO if args.info else logging.WARNING
-    logging.basicConfig(format='%(levelname)s: %(message)s', level=log_level)
+    logging.basicConfig(format="%(levelname)s: %(message)s", level=log_level)
 
-    logging.info('listening to server %s:%s', args.host, args.port)
+    logging.info("listening to server %s:%s", args.host, args.port)
 
     try:
-        with open('./simulator/instructions.txt', 'r') as file:
+        with open("./instructions.txt", "r") as file:
             print(file.read())
     except FileNotFoundError:
-        logging.warning('Couldn\'t open instructions file')
+        logging.warning("Couldn't open instructions file")
 
     try:
         App(args)
     except KeyboardInterrupt:
-        print('\nCancelled by user. Bye!')
+        print("\nCancelled by user. Bye!")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     main()
