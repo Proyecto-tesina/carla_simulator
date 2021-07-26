@@ -23,29 +23,26 @@ class PlayerMonitor:
         player = world.player
         velocity = player.get_velocity()
         control = player.get_control()
-        self.check_steer_event(control.steer)
-        self.check_velocity_event(velocity, control.reverse)
+        self.check_movement(control.steer, velocity, control.reverse)
 
-    def check_steer_event(self, steer):
-        # Usually the steer is 0 and this minimizes the writes on file
-        if steer != self.steer:
-            self.steer = steer
-            if round(self.steer, 1) == -0.3:
-                self._call_post_thread("Turn left")
-            elif round(self.steer, 1) == 0.3:
-                self._call_post_thread("Turn right")
-
-    def check_velocity_event(self, velocity, reverse):
+    def check_movement(self, steer, velocity, reverse):
         velocity_in_km = round(
             3.6 * math.sqrt(velocity.x ** 2 + velocity.y ** 2 + velocity.z ** 2)
         )
+        # Usually the steer is 0 and this minimizes the writes on file
+        if steer != self.steer:
+            rounded_steer = round(steer, 1)
+            if rounded_steer == -0.2:
+                self._call_post_thread("Turn left")
+            elif rounded_steer == 0.2:
+                self._call_post_thread("Turn right")
+            elif rounded_steer == 0 and velocity_in_km != 0 and not reverse:
+                self._call_post_thread("Moving forward")
+            self.steer = steer
+
         if velocity_in_km != self.velocity:
             if velocity_in_km == 0:
                 self._call_post_thread("Stoped")
-            elif (
-                velocity_in_km == 10 and not reverse and velocity_in_km > self.velocity
-            ):
-                self._call_post_thread("Moving forward")
             elif self.velocity == 10 and reverse and velocity_in_km > self.velocity:
                 self._call_post_thread("Moving backwards")
             self.velocity = velocity_in_km
