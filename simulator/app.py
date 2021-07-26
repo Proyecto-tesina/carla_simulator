@@ -93,8 +93,8 @@ class App:
         self.controller.register_event(K_b, alert_light.turn_off_by_user)
 
         # Add these if playing with joystick
-        # self.controller.register_button(1, alert_light.turn_on_by_user)
-        # self.controller.register_button(6, alert_light.turn_on_by_user)
+        self.controller.register_button(1, alert_light.turn_on_by_user)
+        self.controller.register_button(6, alert_light.turn_off_by_user)
 
     def start(self):
         while True:

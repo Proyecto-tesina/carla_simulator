@@ -161,3 +161,7 @@ class KeyboardControl(object):
 
     def register_event(self, key, callback):
         self.simple_key_events.update({key: callback})
+
+    # For compatibility with wheel controller registration
+    def register_button(self, button, callback):
+        pass

@@ -1,12 +1,6 @@
 import math
-import sys
-
 from Controller.keyboard_control import KeyboardControl
-
-if sys.version_info >= (3, 0):
-    from configparser import ConfigParser
-else:
-    from ConfigParser import RawConfigParser as ConfigParser
+from configparser import ConfigParser
 
 import pygame
 
@@ -24,7 +18,7 @@ class WheelControl(KeyboardControl):
         self._joystick.init()
 
         self._parser = ConfigParser()
-        self._parser.read("./simulator/wheel_config.ini")
+        self._parser.read("./wheel_config.ini")
         self._steer_idx = self._parser.getint("G29 Racing Wheel", "steering_wheel")
         self._brake_idx = self._parser.getint("G29 Racing Wheel", "brake")
         self._reverse_idx = self._parser.getint("G29 Racing Wheel", "reverse")
@@ -34,7 +28,8 @@ class WheelControl(KeyboardControl):
         self.simple_joybuttons_events = {
             0: world.restart,
             9: world.hud.toggle_info,
-            2: world.camera_manager.toggle_camera,
+            # TODO: this breaks because its trying to operate on a destroyed actor
+            # 2: world.camera_manager.toggle_camera,
             23: world.camera_manager.next_sensor,
             3: world.next_weather,
         }
@@ -92,3 +87,7 @@ class WheelControl(KeyboardControl):
 
     def register_button(self, button, callback):
         self.simple_joybuttons_events.update({button: callback})
+
+    # For compatibility with keyboard controller registration
+    def register_event(self, key, callback):
+        pass
