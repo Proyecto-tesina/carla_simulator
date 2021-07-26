@@ -19,7 +19,7 @@ al conductor y que partes de nuestra app los distraen más.
 ## Instalación
 
 > Se recomienda usar un entorno virtual para la instalación de las dependencias.
-> El cliente del simulador se lo ha probado con la versión de Python 3.6.0
+> El cliente del simulador se lo ha probado con la versión de Python 3.7.0
 
 ```sh
   git clone git@github.com:Proyecto-tesina/carla_simulator.git

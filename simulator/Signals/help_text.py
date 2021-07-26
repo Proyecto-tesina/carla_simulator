@@ -18,7 +18,7 @@ class HelpText(object):
 
     def _get_help_file(self):
         try:
-            with open("./simulator/instructions.txt", "r") as file:
+            with open("./instructions.txt", "r") as file:
                 return file.read()
         except FileNotFoundError:
             return "There was an error when looking for the instructions file"
